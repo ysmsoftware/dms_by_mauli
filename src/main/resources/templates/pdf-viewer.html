@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:util="http://www.springframework.org/spring-expression/util">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Viewer</title>
+</head>
+<body>
+    <h1>PDF Viewer</h1>
+
+      <th:block th:each="pageIndex : ${#numbers.sequence(0, pageCount - 1)}">
+        <img th:src="'data:image/png;base64,' + ${util:eval('imageUtils.convertToBase64(images[' + pageIndex + '])')}" alt="PDF Page"/>
+    </th:block>
+</body>
+</html>

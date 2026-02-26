@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <title>Mauli Multiatate Co-op Credit Society Ltd. Nashik | View Transaction</title>
+<link rel="shortcut icon"  th:href="@{/dist/img/favicon.ico}">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+        <!-- Toastr -->
+  <link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+  <!-- DataTables -->
+  <link rel="stylesheet" th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+  <link rel="stylesheet" th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+  <!-- Theme style -->
+  <link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+  
+  <!-- Navbar -->
+  <nav th:replace="header"></nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside th:replace="sidebar::sidebar(${menu},${user})"></aside>
+  <!-- /.Main Sidebar Container -->
+  
+ <!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>View Transaction <small><a href="#" id="printBtn"  class="btn btn-default"><i class="fas fa-print"></i> Print</a></small></h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a href="#">Transaction</a></li>
+				              <li class="breadcrumb-item active">View Transaction</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+
+   <!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					
+					<div class="row" id="printLogo" style="display: none;">
+	         			<div class="col-md-12">
+	         					 <p class="text-center"> <a href="#"><img alt="Maulee Multistate Logo" th:src="@{/dist/img/maulee_crop-removebg.png}"  th:width="250px"></a> </p>
+	         			</div>
+	         			<br>
+      			   </div>
+				
+					<div class="row">
+						<div class="col-12">
+							<div class="card card-outline card-primary">
+								<!-- <div class="card-header">
+									<h3 class="card-title">DataTable with default features</h3>
+								</div> -->
+								<!-- /.card-header -->
+								<input type="hidden" name="messageSuccess" id="messageSuccess" th:value="${messageSuccess}">
+								<div class="card-body table-responsive p-0">
+									<table id="tbl1" class="table table-bordered table-striped">
+										<thead>
+										    <tr>	
+											    <th>Sr No</th>	
+											    <th>Employee Name</th>	
+											    <th>Branch Name</th>										
+												<th>Period</th>	
+												<th>Amount</th>																		
+												<th class="no-print">Action</th>
+											</tr>
+											
+										</thead>
+										<tbody>
+											<tr th:each="trans, loop :${transList}" >
+												<td th:text="${loop.count}"></td>
+												<td th:text="${trans.employeeName}"></td>
+												<td th:text="${trans.employeeBranch}"></td>
+												<td th:text="${trans.month}+'-'+${trans.year}"></td>
+												<td th:text="${trans.businessAmount}"></td>
+												<td class="no-print"><a th:href="@{'/delete-transaction/'+${trans.transactionId}}" class="btn btn-sm" style="color:red;">DELETE</a></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+	 <footer  th:replace="footer"></footer>
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+	</div>
+	<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script  th:src="@{/plugins/jquery/jquery.min.js}"></script>
+<!-- Bootstrap -->
+<script  th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- overlayScrollbars -->
+<script  th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+<!-- AdminLTE App -->
+<script  th:src="@{/dist/js/adminlte.js}"></script>
+
+<!-- OPTIONAL SCRIPTS -->
+<script  th:src="@{/dist/js/demo.js}"></script>
+
+<!-- PAGE PLUGINS -->
+<!-- jQuery Mapael -->
+<script  th:src="@{/plugins/jquery-mousewheel/jquery.mousewheel.js}"></script>
+<script  th:src="@{/plugins/raphael/raphael.min.js}"></script>
+<script  th:src="@{/plugins/jquery-mapael/jquery.mapael.min.js}"></script>
+<script  th:src="@{/plugins/jquery-mapael/maps/usa_states.min.js}"></script>
+<!-- Toastr -->
+<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+<!-- ChartJS -->
+<script  th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+<!-- DataTables -->
+<script  th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+<script  th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+<script  th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+<script  th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+
+<!-- PAGE SCRIPTS -->
+<script  th:src="@{/dist/js/pages/dashboard2.js}"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+
+	 $("#tbl1").DataTable({
+	      "responsive": true,
+	      "autoWidth": false,
+	    });
+	 
+	 
+	 $('#printBtn').click( function() {
+	    	
+		 $('#tbl1').dataTable({
+	            "bDestroy": true
+	        }).fnDestroy();
+		 
+		 $('#printLogo').css("display","block");
+
+		 window.print();
+		 
+		 $('#printLogo').css("display","none");		
+		 
+		 $("#tbl1").DataTable({
+		      "responsive": true,
+		      "autoWidth": false,
+		    });
+	    });
+	
+	 
+	  //toast messages
+	 var messageSuccess = $('#messageSuccess').val();
+	  if(messageSuccess.length > 0){
+		  toastr.error(messageSuccess); 
+	  }	  	  
+});
+</script>
+</body>
+</html>

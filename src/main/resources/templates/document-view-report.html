@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+ <title>Document View Report</title>
+ <link rel="shortcut icon"  th:href="@{/dist/img/favicon1.png}">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- daterange picker -->
+  <link rel="stylesheet" th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+    <!-- Tempusdominus Bbootstrap 4 -->
+  <link rel="stylesheet" th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+       <!-- Select2 -->
+  <link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+  <link rel="stylesheet" th:href="@{/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css}">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+    <!-- Toastr -->
+  <link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+  <!-- Theme style -->
+  <link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+  
+  <!-- Navbar -->
+  <nav th:replace="header"></nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside th:replace="sidebar::sidebar(${menu},${user})"></aside>
+  <!-- /.Main Sidebar Container -->
+  
+ <!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Document View Report <!--<small> <a href="#" id="printBtn" class="btn btn-default"><i class="fas fa-print"></i> Print</a></small> --></h1>
+						</div>						
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+
+   	<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row no-print">
+						<!-- left column -->
+						<div class="col-md-12">
+							<!-- general form elements -->
+							<div class="card card-outline card-primary">
+								<!-- <div class="card-header">
+									<h3 class="card-title">Add Form</h3>
+								</div> -->
+								<!-- /.card-header -->
+								<!-- form start -->
+								<form role="form" class="form-horizontal" th:action="@{/document-view-report-result}" method="get" >									
+									<!-- <input type="hidden" name="isactive" value="1"> -->
+									<div class="card-body">
+																				
+										<div class="form-group row">	
+										
+										    <div class="col-sm-2">
+												<select class="form-control select2" id="projectId" name="projectId"  data-placeholder="Select Project" required="required">
+											    	<option></option> 
+											    	<option th:each="project:${projectList}" th:value="${project.projectId}" th:text="${project.projectName}"></option>
+											    	
+											    </select>
+											</div>	
+																				    
+											<div class="col-sm-2">
+												<select class="form-control select2" id="documentId" name="documentId"  data-placeholder="Select Document" required="required">
+											    	<option></option> 
+											    </select>
+											</div>	
+										
+											<div class="col-sm-2" >
+												<select class="form-control select2" id="userId" name="userId"  data-placeholder="Select User" required="required">
+											    	<option value="0">All Users</option> 
+											    	<option th:each="user:${userList}" th:value="${user.id}" th:text="${user.name}"></option>
+											    </select>
+											</div>		
+										
+											<!-- <div class="col-sm-1">
+											    From Date																						
+											</div>	 
+																				
+											<div class="col-sm-2">
+											    <div class="input-group date" id="reservationdate1" data-target-input="nearest">
+							                        <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate1" id="createdDatetime" name="fromDate" required="required" placeholder="From Date"/>
+							                        <div class="input-group-append" data-target="#reservationdate1" data-toggle="datetimepicker">
+							                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+							                        </div>
+							                    </div>
+											</div>	-->
+											
+											<!-- <div class="col-sm-1">
+											    To Date																						
+											</div>	
+																				
+											<div class="col-sm-2">
+											    
+												 <div class="input-group date" id="reservationdate2" data-target-input="nearest">
+							                        <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate2" id="ppaDate" name="toDate" required="required" placeholder="To Date"/>
+							                        <div class="input-group-append" data-target="#reservationdate2" data-toggle="datetimepicker">
+							                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+							                        </div>
+							                     </div> 
+											</div>	-->
+															
+											<div class="col-sm-1">
+											    <button type="submit" id="btnSubmit" class="btn btn-primary  col-md-offset-2" >Search</button>																							
+											</div>		
+											<!-- 
+											<div class="col-sm-5" >
+											    <a th:href="@{agency-wise-report-excel?(fromDate=${fromDate}, toDate=${toDate})}" th:unless="${#lists.isEmpty(transList)}" class="float-right">
+											    	 Download&nbsp;&nbsp;<img alt="excel download" th:src="@{/dist/img/excel.jpg}" height="40px" width="40px">
+											    </a>																							
+											</div>	 -->								
+										</div>																			
+									</div>									
+								</form>
+							</div>
+							<!-- /.card -->
+						</div>
+						<!--/.col (left) -->
+					</div>
+					<!-- /.row -->
+				   				   
+				   
+					<div class="row" th:if="${documentViewList != null}">
+						<div class="col-12">
+							<div class="card card-outline card-primary">
+								 <div class="card-header">
+									<h3 class="card-title" th:text="'Document View Report - ('+${docTitle}+')'" ></h3>									
+								</div> 
+								<!-- /.card-header -->								
+								<div class="card-body table-responsive p-0">
+									<table class="table table-bordered table-striped" th:if="${#lists.isEmpty(documentViewList)}">
+											<tr>
+												<td style="text-align: center;" colspan="4">Record not found.</td>
+											</tr>
+									</table>
+									<table id="tbl1" class="table table-bordered table-striped" th:unless="${#lists.isEmpty(documentViewList)}">
+										<thead>
+										    <tr>	
+											    <th style="text-align: center;">Sr No</th>	
+											    <th style="text-align: center;">User Name</th>
+											    <th style="text-align: center;">View Datetime</th>
+											    <th style="text-align: center;">Version Number</th>												    
+											</tr>											
+										</thead>
+										<tbody>
+											<tr th:each="trans, loop :${documentViewList}" >
+												<td th:text="${loop.count}"></td>
+												<td th:text="${trans.userName}"></td>
+												<td th:text="${trans.viewDatetime}"></td>
+												<td th:text="${trans.versionNumber}"></td>
+											</tr>
+										</tbody>
+									</table>
+									
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+						</div>
+						<!-- /.col -->
+					</div>
+				
+				
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+	<!--  <footer  th:replace="footer"></footer> -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+	</div>
+	<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script  th:src="@{/plugins/jquery/jquery.min.js}"></script>
+<!-- Bootstrap -->
+<script  th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- overlayScrollbars -->
+<script  th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+<!-- InputMask -->
+<script th:src="@{/plugins/moment/moment.min.js}"></script>
+<script th:src="@{/plugins/inputmask/min/jquery.inputmask.bundle.min.js}"></script>
+<!-- date-range-picker -->
+<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+<!-- Select2 -->
+  <script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+<!-- AdminLTE App -->
+<script  th:src="@{/dist/js/adminlte.js}"></script>
+
+<!-- OPTIONAL SCRIPTS -->
+<script  th:src="@{/dist/js/demo.js}"></script>
+
+<!-- PAGE PLUGINS -->
+<!-- jQuery Mapael -->
+<script  th:src="@{/plugins/jquery-mousewheel/jquery.mousewheel.js}"></script>
+<script  th:src="@{/plugins/raphael/raphael.min.js}"></script>
+<script  th:src="@{/plugins/jquery-mapael/jquery.mapael.min.js}"></script>
+<script  th:src="@{/plugins/jquery-mapael/maps/usa_states.min.js}"></script>
+<!-- ChartJS -->
+<script  th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+<!-- Toastr -->
+<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+<!-- PAGE SCRIPTS -->
+<script  th:src="@{/dist/js/pages/dashboard2.js}"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+	
+	var contextPath = '[[${contextPath}]]';
+	
+	//Initialize Select2 Elements
+    $('.select2').select2();
+	
+	//$('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
+	//$('[data-mask]').inputmask();
+	
+	
+	//Date range picker
+    //$('#reservationdate1, #reservationdate2').datetimepicker({
+    //	format: 'DD/MM/YYYY' 
+   // }); 
+	
+    $('#projectId').change(function() {
+		 		
+		 var projectId = $("#projectId").val();
+				 
+		 $.ajax({				  
+			  url:  contextPath+'/getDocumentListByProject',
+			  type: 'GET',
+			  dataType : 'json',
+	          data: {"projectId":projectId},
+			  success: function(result) {	
+				  
+				  $("#documentId").empty();
+				  var $options = "<option></option>";
+				  for (var i = 0; i < result.length; i++) {
+					 $options +=  "<option value='"+result[i].documentId+"'>"+result[i].documentTitle+"</option>"					 					  
+				  }				 
+				 // alert($options);
+				  $('#documentId').html($options);		
+				
+			  },
+			  error: function(e) {				
+				console.log('error : '+ e.message);
+			  }
+		  });	
+	});
+   
+		
+});
+</script>
+</body>
+</html>

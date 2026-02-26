@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <link rel="shortcut icon"  th:href="@{/dist/img/favicon.ico}">
+  <title>DMS | Dashboard</title>
+  <link rel="shortcut icon"  th:href="@{/dist/img/favicon.ico}">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+          <!-- Toastr -->
+  <link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+  <!-- Theme style -->
+  <link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+  
+  <!-- Navbar -->
+  <nav th:replace="header"></nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside th:replace="sidebar::sidebar(${menu}, ${user})"></aside>
+  <!-- /.Main Sidebar Container -->
+  
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-2">
+            <h1 class="m-0 text-dark">Projects</h1>
+          </div>  
+          <div class="col-sm-7">
+            <input class="form-control col-sm-5" type="text" id="Search" onkeyup="myFunction()" placeholder="Search Project" >
+          </div><!-- /.col -->
+          <div class="col-sm-3">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item" th:if="${user.role} == 'ROLE_ADMIN'"><span><a th:href="@{/add-project}" class="btn btn-danger" ><i class="fas fa-plus"></i> Add New Project</a> </span></li>
+             </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid"> <input type="hidden" name="messageSuccess" id="messageSuccess" th:value="${messageSuccess}">
+        <!-- Info boxes -->
+        <div class="row">
+          
+         
+          <div class="col-12 col-sm-6 col-md-3 target" th:each="project: ${projectList}">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-info elevation-1"><i class="fas fa-folder"></i></span> 
+
+              <div class="info-box-content">
+                <span class="info-box-number"><a th:href="@{'/documents/'+${project.projectId}}" class="nav-link " th:text="${project.projectName}"></a></span>
+              </div>              
+            </div>           
+          </div>
+          
+          <div class="clearfix hidden-md-up"></div>
+          
+        </div>
+      </div><!--/. container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+
+  <!-- Main Footer -->
+  <footer th:replace="footer"></footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script  th:src="@{/plugins/jquery/jquery.min.js}"></script>
+<!-- Bootstrap -->
+<script  th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- overlayScrollbars -->
+<script  th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+<!-- Toastr -->
+<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+<!-- AdminLTE App -->
+<script  th:src="@{/dist/js/adminlte.js}"></script>
+
+<!-- OPTIONAL SCRIPTS -->
+<script  th:src="@{/dist/js/demo.js}"></script>
+
+<!-- PAGE PLUGINS -->
+<!-- jQuery Mapael -->
+<script  th:src="@{/plugins/jquery-mousewheel/jquery.mousewheel.js}"></script>
+<script  th:src="@{/plugins/raphael/raphael.min.js}"></script>
+<script  th:src="@{/plugins/jquery-mapael/jquery.mapael.min.js}"></script>
+<script  th:src="@{/plugins/jquery-mapael/maps/usa_states.min.js}"></script>
+<!-- ChartJS -->
+<script  th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+
+<!-- PAGE SCRIPTS -->
+<!-- <script  th:src="@{/dist/js/pages/dashboard2.js}"></script> -->
+<script type="text/javascript">
+$(document).ready(function () {
+
+  //toast messages
+	 var messageSuccess = $('#messageSuccess').val();
+	  if(messageSuccess.length > 0){
+		  toastr.success(messageSuccess); 
+	  }	  	  
+});
+
+function myFunction() {
+	  var input = document.getElementById("Search");
+	  var filter = input.value.toLowerCase();
+	  var nodes = document.getElementsByClassName('target');
+
+	  for (i = 0; i < nodes.length; i++) {
+	    if (nodes[i].innerText.toLowerCase().includes(filter)) {
+	      nodes[i].style.display = "block";
+	    } else {
+	      nodes[i].style.display = "none";
+	    }
+	  }
+	}
+</script>  
+</body>
+</html>

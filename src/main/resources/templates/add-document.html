@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head> 
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>DMS | Add Document </title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon"  th:href="@{/dist/img/favicon.ico}">
+ <link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" th:href="@{/plugins/icheck-bootstrap/icheck-bootstrap.min.css}">
+    <!-- daterange picker -->
+  <link rel="stylesheet" th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+   <!-- SweetAlert2 -->
+  <link rel="stylesheet" th:href="@{/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css}">
+    <!-- Tempusdominus Bbootstrap 4 -->
+  <link rel="stylesheet" th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+  <!-- iCheck -->
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" th:href="@{/plugins/icheck-bootstrap/icheck-bootstrap.min.css}">
+      <!-- Select2 -->
+  <link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+  <link rel="stylesheet" th:href="@{/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css}">
+  <!-- JQVMap -->
+  <link rel="stylesheet" th:href="@{/plugins/jqvmap/jqvmap.min.css}">
+      <!-- Toastr -->
+  <link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+  <!-- Theme style -->
+  <link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+  <!-- summernote -->
+  <link rel="stylesheet" th:href="@{/plugins/summernote/summernote-bs4.css}">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+  <!-- Navbar -->
+  <nav th:replace="header"></nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside th:replace="sidebar::sidebar(${menu},${user})"></aside>
+  <!-- /.Main Sidebar Container -->
+
+ <!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1 class="m-0 text-grey"><a class="m-0" th:href="@{'/documents/'+${projectId}}" th:text="${project.projectName}"></a> <small><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i> Add Document</small> </h1>
+						</div>
+						<!--<div class="col-sm-6">
+				            <ol class="breadcrumb float-sm-right">
+				              <li class="breadcrumb-item"><a href="#">Document</a></li>
+				              <li class="breadcrumb-item active">Add Document</li>
+				            </ol>
+				        </div> /.col -->
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+    		<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<!-- left column -->
+						<div class="col-md-12">
+							<!-- general form elements -->
+							<div class="card card-outline card-primary">
+								<!-- <div class="card-header">
+									<h3 class="card-title">Add Form</h3>
+								</div> -->
+								<!-- /.card-header -->
+								<!-- form start -->
+								<form role="form" class="form-horizontal" th:action="@{/save-document}" method="post" enctype="multipart/form-data">
+									
+									<input type="hidden" name="projectId" th:value="${projectId}"> 
+									<div class="card-body">
+									
+									<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="projectName">Project Name</label>
+											</div>
+											<div class='col-sm-3'>
+												<div th:text="${project.projectName}"></div>
+											</div>											
+										</div>
+									
+									   <div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="documentCategory">Document Category<span class="text-danger">*</span></label>
+											</div>
+											<div class="col-sm-3">
+												<select class="form-control select2"  data-placeholder="Select Document Category" id="documentCategory" name="documentCategory" required="required">
+													<option></option>
+													<option th:each="category:${categoryList}" th:value="${category.categoryId}" th:text="${category.categoryName}"></option>
+												</select>													
+											</div>	
+											<div class='col-sm-3' th:if="${user.role} == 'ROLE_ADMIN'"> 
+											   <div class='row'>
+												 <a class='col-sm-3' href="#" title="Add New Category" data-toggle="modal" data-target="#modal-category"><div class="timeline timeline-inverse">
+												 <div><i class="fas fa-plus bg-primary"></i></div></div> </a>
+												 <span class='col-sm-9 text-primary'><a href="#" title="Add New Category" data-toggle="modal" data-target="#modal-category">Add New Category</a></span>
+											  </div>
+											</div>											
+										</div>
+										
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="documentType">Document Type<span class="text-danger">*</span></label>
+											</div>
+											<div class="col-sm-3">
+												<select class="form-control select2"  data-placeholder="Select Document Type" id="documentType" name="documentType" required="required">
+													<option></option>													
+												</select>													
+											</div>	
+											<div class='col-sm-3'  style="display: none;" id="primaryDocumentType" th:if="${user.role} == 'ROLE_ADMIN'">
+												<div class='row'>
+												  <a class="col-sm-3" href="#" title="Add New Sub Category" data-toggle="modal" data-target="#modal-document-type">
+												  <div class="timeline timeline-inverse"><div><i class="fas fa-plus bg-primary"></i></div></div></a>
+											      <span class='col-sm-9 text-primary'><a href="#" title="Add New Document Type" data-toggle="modal" data-target="#modal-document-type">Add New Document Type</a></span>
+											     </div>
+											</div>	
+											<div class='col-sm-3' id="secondaryDocumentType" th:if="${user.role} == 'ROLE_ADMIN'">												
+												 <div class='row'>
+												   <div class="col-sm-3 timeline timeline-inverse"><div><i class="fas fa-plus bg-secondary"></i></div></div>
+											       <span class='col-sm-9 text-secondary'>Add New Document Type <p style="font-size: 10px;">(Select Document Category, to add new document type)</p></span>
+											     </div>
+											</div>												
+										</div>
+										
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="documentSubType">Document Sub Type</label>
+											</div>
+											<div class="col-sm-3">
+												<select class="form-control select2"  data-placeholder="Select Document Sub Type" id="documentSubType" name="documentSubType">
+													<option></option>
+												</select>													
+											</div>	
+											<div class='col-sm-3'  style="display: none;" id="primaryDocumentSubType" th:if="${user.role} == 'ROLE_ADMIN'">
+												<div class='row'>
+												  <a class="col-sm-3" href="#" title="Add New Sub Category" data-toggle="modal" data-target="#modal-document-sub-type">
+												  <div class="timeline timeline-inverse"><div><i class="fas fa-plus bg-primary"></i></div></div></a>
+											      <span class='col-sm-9 text-primary'><a href="#" title="Add New Document Sub Type" data-toggle="modal" data-target="#modal-document-sub-type">Add New Sub Type</a></span>
+											     </div>
+											</div>	
+											<div class='col-sm-3' id="secondaryDocumentSubType" th:if="${user.role} == 'ROLE_ADMIN'">												
+												 <div class='row'>
+												   <div class="col-sm-3 timeline timeline-inverse"><div><i class="fas fa-plus bg-secondary"></i></div></div>
+											       <span class='col-sm-9 text-secondary'>Add New Sub Type <p style="font-size: 10px;">(Select Document Type, to add new document sub type)</p></span>
+											     </div>
+											</div>											
+										</div>
+										
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="documentTitle">Document Title<span class="text-danger">*</span></label>
+											</div>
+											<div class="col-sm-3">
+												<input type="text" class="form-control" id="documentTitle" name="documentTitle" required="required">													
+											</div>											
+										</div>
+										
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="aboutDocument">About Document<span class="text-danger">*</span></label>
+											</div>
+											<div class="col-sm-3">
+												<textarea class="form-control" id="aboutDocument" name="aboutDocument" required="required"></textarea>												
+											</div>											
+										</div>
+										
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="aboutDocument">I want to upload<span class="text-danger">*</span></label>
+											</div>
+											 <div class="col-sm-6">
+							                      <!-- radio -->
+							                      <div class="form-group">
+							                        <div class="form-check">
+							                          <input class="form-check-input" type="radio" name="documentTypeSelection" id="radio1" required="required" value="PDF">
+							                          <label class="form-check-label">PDF</label>
+							                        </div>
+							                        <div class="form-check">
+							                          <input class="form-check-input" type="radio" name="documentTypeSelection" id="radio2" required="required" value="Images">
+							                          <label class="form-check-label">Images</label>
+							                        </div>							                        
+							                      </div>
+							                    </div>										
+										</div>
+										
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="documentName">Upload Document<span class="text-danger">*</span></label>
+											</div>
+											<div class="col-sm-3">
+												<input type="file"  id="files" name="files" required="required" accept="image/*" multiple="multiple"></input>												
+											</div>											
+										</div>
+										
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="note">Note (optional)</label>
+											</div>
+											<div class="col-sm-3">
+												<textarea class="form-control" id="note" name="note" ></textarea>												
+											</div>											
+										</div>
+																				
+									</div>
+									
+									<!-- /.card-body -->
+									<div class="card-footer row">
+									      <div class="col-sm-2" ></div>
+									   		<button type="submit" id="btnSubmit" class="btn btn-primary  col-md-offset-2" >Submit</button>
+									</div>
+								</form>
+							</div>
+							<!-- /.card -->
+						</div>
+						<!--/.col (left) -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+				
+				<div class="modal fade" id="modal-category">
+		        <div class="modal-dialog">
+		          <div class="modal-content">
+		            <form id="form1" name="form1">
+		            <div class="modal-header">
+		              <h4 class="modal-title">Add Document Category</h4>
+		              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		                <span aria-hidden="true">&times;</span>
+		              </button>
+		            </div>
+		            <div class="modal-body">
+		              <p>
+			              <select class="form-control select2"  data-placeholder="Select Department" id="departmentId" name="departmentId" required="required">
+								 <option></option>
+								 <option th:each="department:${departmentList}" th:value="${department.departmentId}" th:text="${department.departmentName}"></option>
+						  </select>	
+		              </p>
+		              <p><input type="text" class="form-control" id="categoryName" name="categoryName" placeholder="Enter Category Name" required="required"  ></p>
+		            </div>
+		            <div class="modal-footer justify-content-between">
+		              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		              <button type="button" class="btn btn-primary" id="btnSaveCategory">Save</button>
+		            </div>
+		            </form>
+		          </div>
+		          <!-- /.modal-content -->
+		        </div>
+		        <!-- /.modal-dialog -->
+		      </div>
+		      <!-- /.modal -->
+		      		      
+		      <div class="modal fade" id="modal-document-type">
+		        <div class="modal-dialog">
+		           <div class="modal-content">
+		            <form id="form2" name="form2">
+			            <div class="modal-header">
+			              <h4 class="modal-title">Add New Document Type</h4>
+			              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			                <span aria-hidden="true">&times;</span>
+			              </button>
+			            </div>
+			            <div class="modal-body">
+			              <p><label>Document Category: &nbsp;<span id="displayCategoryName"></span></label></p>
+			              <p><input type="text" class="form-control" id="documentTypeName" name="documentTypeName" placeholder="Enter Document Type Name" required="required"  ></p>
+			                 <!-- <input type="hidden" id="catName" name="catName" value="" /> -->
+			            </div>
+			            <div class="modal-footer justify-content-between">
+			              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			              <button type="button" class="btn btn-primary" id="btnSaveDocumentType">Save</button>
+			            </div>
+		            </form>
+		          </div>
+		          <!-- /.modal-content -->
+		        </div>
+		        <!-- /.modal-dialog -->
+		      </div>
+		      <!-- /.modal -->
+		      
+		      
+		      <div class="modal fade" id="modal-document-sub-type">
+		        <div class="modal-dialog">
+		           <div class="modal-content">
+		            <form id="form3" name="form3">
+			            <div class="modal-header">
+			              <h4 class="modal-title">Add New Document Sub Type</h4>
+			              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			                <span aria-hidden="true">&times;</span>
+			              </button>
+			            </div>
+			            <div class="modal-body">
+			              <p><label>Document Category: &nbsp;<span id="displayCategoryName1"></span></label></p>
+			              <p><label>Document Type: &nbsp;<span id="displayDocumentTypeName"></span></label></p>
+			              <p><input type="text" class="form-control" id="documentSubTypeName" name="documentSubTypeName" placeholder="Enter Document Sub Type Name" required="required"  ></p>
+			                 <!-- <input type="hidden" id="catName" name="catName" value="" /> -->
+			            </div>
+			            <div class="modal-footer justify-content-between">
+			              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			              <button type="button" class="btn btn-primary" id="btnSaveDocumentSubType">Save</button>
+			            </div>
+		            </form>
+		          </div>
+		          <!-- /.modal-content -->
+		        </div>
+		        <!-- /.modal-dialog -->
+		      </div>
+		      <!-- /.modal -->
+		      
+				
+			</section>
+			<!-- /.content -->
+		</div>
+  <!-- /.content-wrapper -->
+ 
+  <footer  th:replace="footer"></footer>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script th:src="@{/plugins/jquery-ui/jquery-ui.min.js}"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Summernote -->
+<script  th:src="@{/plugins/summernote/summernote-bs4.min.js}"></script>
+<!-- overlayScrollbars -->
+<script  th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+<!-- Select2 -->
+<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+<!-- Toastr -->
+<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+<!-- InputMask -->
+<script th:src="@{/plugins/moment/moment.min.js}"></script>
+<script th:src="@{/plugins/inputmask/min/jquery.inputmask.bundle.min.js}"></script>
+<!-- date-range-picker -->
+<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+<!-- bs-custom-file-input -->
+<script th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+<!-- AdminLTE App -->
+<script  th:src="@{/dist/js/adminlte.js}"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes)
+<script  th:src="@{/dist/js/pages/dashboard.js}"></script> -->
+<!-- jquery-validation -->
+<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+<script th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+<!-- AdminLTE for demo purposes -->
+<script  th:src="@{/dist/js/demo.js}"></script>
+<script type="text/javascript">
+  $(function(){
+	   
+	    var contextPath = '[[${contextPath}]]';
+	    
+	    //Initialize Select2 Elements
+	    $('.select2').select2();
+	
+	    bsCustomFileInput.init();
+	    	    
+	    $('#radio1').change(function(){
+	    	//selected_value = $("input[name='documentType']:checked").val();
+	    	//alert(selected_value); accept=""
+	    	$("#files").attr("accept",".pdf");
+	    	$("#files").removeAttr('multiple');
+	    	$("#files").val('');  
+	    });
+	    
+	    $('#radio2').change(function(){
+	    	$("#files").attr("accept","image/*");
+	    	$("#files").attr("multiple","multiple");
+	    	$("#files").val(''); 
+	    });
+		 
+		$('#documentCategory').change(function() {
+			 
+			 $("#secondaryDocumentType").css('display','none');
+			 $("#primaryDocumentType").css('display','block');
+			 
+			 var documentCategory = $("#documentCategory").val();
+			 //alert($('#documentCategory').find(':selected').text());
+			 $("#displayCategoryName").text($("#documentCategory").find(':selected').text());
+			 //$("#catName").val(bookCat);
+			 
+			 $.ajax({				  
+				  url:  contextPath+'/getDocumentTypeList',
+				 // url:  '/getDocumentTypeList',
+				  type: 'POST',
+				  dataType : 'json',
+		          data: {"categoryName":documentCategory},
+				  success: function(result) {	
+					  console.log('result : '+result);
+					  $("#documentType").empty();
+					  var $options = "<option></option>";
+					  for (var i = 0; i < result.length; i++) {
+						 var scn = result[i].documentTypeName; 
+						 $options +=  "<option value='"+result[i].documentTypeId+"'>"+scn+"</option>"					 					  
+					  }				 
+					  $('#documentType').html($options);		
+					
+				  },
+				  error: function(e) {				
+					console.log('error : '+ e.message);
+				  }
+			  });	
+		});
+	    
+		
+	    $('#btnSaveCategory').click(function() {
+		   	 
+			if($("#form1")[0].checkValidity()) {
+                
+				var departmentId = $("#departmentId").val();
+				var categoryName = $("#categoryName").val();
+				  								  
+				  $.ajax({
+					  //url:  '/ppa/getAgencyNameByAgencyUniqueCode',
+					  url:  contextPath+'/addCategory',
+					  type: 'POST',
+					  dataType : 'json',
+			          data: {"categoryName":categoryName,"departmentId":departmentId},
+					  success: function(result) {	
+						 
+						  $("#documentCategory").empty();
+						  var $options = "<option></option>";
+						  for (var i = 0; i < result.length; i++) {
+							  var cat = result[i].categoryName; 
+							  if(categoryName.toLowerCase() == cat.toLowerCase()){
+								  $options +=  "<option value='"+result[i].categoryId+"' selected='selected'>"+cat+"</option>" 
+							  }else{
+								  $options +=  "<option value="+result[i].categoryId+">"+cat+"</option>"
+							  }						  
+						  }
+						  $('#documentCategory').html($options);	
+						  
+						  $("#secondaryDocumentType").css('display','none');
+						  $("#primaryDocumentType").css('display','block');
+						  var documentCategory = $("#documentCategory").val();
+						  $("#displayCategoryName").text($("#documentCategory").find(':selected').text());
+						  
+						  $("#documentType").empty();
+						  $("#documentSubType").empty();
+						  var $options = "<option></option>";						  
+						  $('#documentType').html($options);
+						  $("#documentSubType").html($options);
+					  },
+					  error: function(e) {
+						//called when there is an error
+						console.log(e.message);
+					  }
+				  });	
+				
+				  $("#modal-category").modal('hide');
+				  
+            } else {
+                $("#form1")[0].reportValidity();
+            }			  
+	 }); 
+		
+	 $("#modal-category").on("hidden.bs.modal", function () {
+		  $("#categoryName").val('');
+		  $("#departmentId").val('').select2();
+		  
+	 });
+	 
+	 
+     $('#documentType').change(function() {
+		 
+	     $("#secondaryDocumentSubType").css('display','none');
+		 $("#primaryDocumentSubType").css('display','block');
+		 
+		 var documentCategory = $("#documentCategory").val();
+		 $("#displayCategoryName1").text($("#documentCategory").find(':selected').text());
+		
+		 var documentType = $("#documentType").val();
+		 $("#displayDocumentTypeName").text($("#documentType").find(':selected').text());
+		 		 
+		 $.ajax({
+			  
+			  url:  contextPath+'/getDocumentSubTypeList',
+			  type: 'GET',
+			  dataType : 'json',
+	          data: {"documentTypeName":documentType},
+			  success: function(result) {	
+				 
+				  $("#documentSubType").empty();
+				  var $options = "<option></option>";
+				  for (var i = 0; i < result.length; i++) {
+					 var scn = result[i].documentSubTypeName; 
+					 $options +=  "<option value='"+result[i].documentSubTypeId+"'>"+scn+"</option>"					 					  
+				  }				 
+				  $('#documentSubType').html($options);		
+				
+			  },
+			  error: function(e) {
+				//called when there is an error
+				console.log(e.message);
+			  }
+		  });	
+	 });
+	 
+     
+	 $('#btnSaveDocumentType').click(function() {
+	   	 
+			if($("#form2")[0].checkValidity()) {
+
+				  var documentTypeName= $("#documentTypeName").val();	
+				  var catName= $("#documentCategory").val();	
+				  
+				  $.ajax({
+					  url:  contextPath+'/addDocumentType',
+					  type: 'POST',
+					  dataType : 'json',
+			          data: {"documentTypeName":documentTypeName, "categoryName":catName},
+					  success: function(result) {	
+						 
+						  $("#documentType").empty();
+						  var $options = "<option></option>";
+						  for (var i = 0; i < result.length; i++) {
+							 var scn = result[i].documentTypeName; 
+							 if(documentTypeName.toLowerCase() == scn.toLowerCase()){
+							  	  $options +=  "<option value='"+result[i].documentTypeId+"' selected='selected'>"+scn+"</option>" 
+							 }else{
+								  $options +=  "<option value='"+result[i].documentTypeId+"'>"+scn+"</option>"
+							 }						  
+						  }
+						  //alert($options);
+						  $('#documentType').html($options);		
+						  
+						  
+						     $("#secondaryDocumentSubType").css('display','none');
+							 $("#primaryDocumentSubType").css('display','block');
+							 
+							 var documentCategory = $("#documentCategory").val();
+							 $("#displayCategoryName1").text($("#documentCategory").find(':selected').text());
+							
+							 var documentType = $("#documentType").val();
+							 $("#displayDocumentTypeName").text($("#documentType").find(':selected').text());
+							 		 
+							 $.ajax({
+								  
+								  url:  contextPath+'/getDocumentSubTypeList',
+								  type: 'GET',
+								  dataType : 'json',
+						          data: {"documentTypeName":documentType},
+								  success: function(result) {	
+									 
+									  $("#documentSubType").empty();
+									  var $options = "<option></option>";
+									  for (var i = 0; i < result.length; i++) {
+										 var scn = result[i].documentSubTypeName; 
+										 $options +=  "<option value='"+result[i].documentSubTypeId+"'>"+scn+"</option>"					 					  
+									  }				 
+									  $('#documentSubType').html($options);		
+									
+								  },
+								  error: function(e) {
+									//called when there is an error
+									console.log(e.message);
+								  }
+							  });
+						
+					  },
+					  error: function(e) {
+						//called when there is an error
+						console.log(e.message);
+					  }
+				  });	
+				
+				  $("#modal-document-type").modal('hide');
+				  
+				     
+		   } else {
+		       	  $("#form2")[0].reportValidity();
+		   }			  
+	 }); 
+		
+	 $("#modal-document-type").on("hidden.bs.modal", function () {
+		  $("#documentTypeName").val('');
+	 });
+	 
+	
+	 
+	 $('#btnSaveDocumentSubType').click(function() {
+	   	 
+			if($("#form3")[0].checkValidity()) {
+
+				  var categoryTypeName = $("#documentCategory").val();	
+				  var documentTypeName = $("#documentType").val();	
+				  var documentSubTypeName= $("#documentSubTypeName").val();	
+				  
+				  $.ajax({
+					  url:  contextPath+'/addDocumentSubType',
+					  type: 'POST',
+					  dataType : 'json',
+			          data: {"categoryTypeName":categoryTypeName, "documentTypeName":documentTypeName, "documentSubTypeName":documentSubTypeName},
+					  success: function(result) {	
+						 
+						  $("#documentSubType").empty();
+						  var $options = "<option></option>";
+						  for (var i = 0; i < result.length; i++) {
+							 var scn = result[i].documentSubTypeName; 
+							 if(documentSubTypeName.toLowerCase() == scn.toLowerCase()){
+							  	  $options +=  "<option value='"+result[i].documentSubTypeId+"' selected='selected'>"+scn+"</option>" 
+							 }else{
+								  $options +=  "<option value='"+result[i].documentSubTypeId+"'>"+scn+"</option>"
+							 }						  
+						  }
+						  
+						  $('#documentSubType').html($options);		
+						  
+					  },
+					  error: function(e) {
+						//called when there is an error
+						console.log(e.message);
+					  }
+				  });	
+				
+				  $("#modal-document-sub-type").modal('hide');
+				
+		   } else {
+		       	  $("#form3")[0].reportValidity();
+		   }			  
+	 }); 
+		
+	 $("#modal-document-sub-type").on("hidden.bs.modal", function () {
+		  $("#documentSubTypeName").val('');
+	 });
+	 
+  });
+</script>
+</body>
+</html>

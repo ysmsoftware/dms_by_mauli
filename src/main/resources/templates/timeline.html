@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>DMS | Timeline</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon"  th:href="@{/dist/img/favicon.ico}">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+  <!-- AdminLTE css -->
+  <link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<!-- Site wrapper -->
+<div class="wrapper">
+  
+  <!-- Navbar -->
+  <nav th:replace="header"></nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside th:replace="sidebar::sidebar(${menu}, ${user})"></aside>
+  <!-- /.Main Sidebar Container -->
+ 
+ 
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+          	<h1 class="m-0 text-grey"><a class="m-0" th:href="@{'/documents/'+${projectId}}" th:text="${project.projectName}"></a> <small><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i> Timeline</small> </h1>
+          </div>
+           <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active" th:text="${user.role}"></li>
+            </ol>
+          </div> 
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        
+        <!-- Timelime example  -->
+        <div class="row">
+          <div class="col-md-12" th:if="${user.role == 'ROLE_ADMIN'}" >
+            <!-- The time line -->
+            <div class="timeline" th:each="doc, iterStat : ${documents}" >
+              <!-- timeline time label -->
+                   
+              <div class="time-label" th:if="${iterStat.index == 0}">
+                <span class="bg-red" th:text="${#strings.arraySplit(doc.createdDatetime,' ')[0]}"></span>
+              </div>                   
+                              
+              <div class="time-label" th:if="${iterStat.index > 0 and #strings.arraySplit(documents[iterStat.index - 1].createdDatetime,' ')[0] !=  #strings.arraySplit(doc.createdDatetime,' ')[0]}">
+                <span class="bg-red" th:text="${#strings.arraySplit(doc.createdDatetime,' ')[0]}"></span>
+              </div>
+                            
+              <div>  
+                <i class="fas fa-file bg-purple"></i>
+                <div class="timeline-item">
+                  <span class="time"><i class="fas fa-clock"></i> <span th:text="${#strings.arraySplit(doc.createdDatetime,' ')[1]+' '+#strings.arraySplit(doc.createdDatetime,' ')[2]}"></span></span>
+                  
+                  <h3 class="timeline-header" th:if="${doc.documentApproval == 0 }"> <span class="text-success text-bold" th:text="${doc.userName}"></span> from department <span class="text-danger text-bold" th:text="${doc.document.departmentName}"></span> upload <a th:href="@{'/view-document-version/'+${doc.documentRevisedId}}" th:text="${doc.documentName}"></a>  under <span class="text-danger text-bold" th:text="${doc.document.categoryName}"></span> category <span class="right badge badge-warning" >Revised</span></h3>
+ 				  <h3 class="timeline-header" th:if="${doc.documentApproval == 1}"> <span class="text-success text-bold" th:text="${doc.userName}"></span> from department <span class="text-danger text-bold" th:text="${doc.document.departmentName}"></span> upload <a th:href="@{'/view-document-details/'+${doc.document.documentId}}" th:text="${doc.documentName}"></a>  under <span class="text-danger text-bold" th:text="${doc.document.categoryName}"></span> category <span class="right badge bg-info" th:if="${doc.document.documentApproval == 0}">Pending</span> <span class="right badge badge-success" th:if="${doc.document.documentApproval == 1}">Approved</span></h3>
+ 				  				  
+ 				  <span class="time" th:text="'version '+${doc.versionNumber}"></span>
+ 				  <span class="time text-danger" th:text="${doc.document.documentTypeName}+' > '+${doc.document.documentSubTypeName}"></span>
+ 				  
+ 				  <div class="timeline-body" th:if="${doc.note != ''}" th:text="${doc.note}"> </div>  
+ 				  <div class="timeline-body" th:if="${doc.note == ''}" >-</div>                 
+                </div>
+              </div>      
+               <!--  <div>
+                <i class="fas fa-clock bg-gray"></i>
+              </div> -->
+           
+            </div>
+          </div>  
+            
+          <div class="col-md-12" th:if="${user.role == 'ROLE_USER'}"> 
+            <!-- The time line -->
+            <div class="timeline"  th:each="doc, iterStat : ${documents}" >
+              <!-- timeline time label -->
+                   
+              <div class="time-label" th:if="${iterStat.index == 0}">
+                <span class="bg-red" th:text="${#strings.arraySplit(doc.createdDatetime,' ')[0]}"></span>
+              </div>                   
+                              
+              <div class="time-label" th:if="${doc.documentApproval == 1 and iterStat.index > 0 and #strings.arraySplit(documents[iterStat.index - 1].createdDatetime,' ')[0] !=  #strings.arraySplit(doc.createdDatetime,' ')[0]}">
+                <span class="bg-red" th:text="${#strings.arraySplit(doc.createdDatetime,' ')[0]}"></span>
+              </div>
+                            
+              <div th:if="${doc.documentApproval == 1}">  
+                <i class="fas fa-file bg-purple"></i>
+                <div class="timeline-item">
+                  <span class="time"><i class="fas fa-clock"></i> <span th:text="${#strings.arraySplit(doc.createdDatetime,' ')[1]+' '+#strings.arraySplit(doc.createdDatetime,' ')[2]}"></span></span>
+                  
+                  <h3 class="timeline-header" > <span class="text-success text-bold" th:text="${doc.userName}"></span> from department <span class="text-danger text-bold" th:text="${doc.document.departmentName}"></span> upload <a th:href="@{'/view-document-details/'+${doc.document.documentId}}" th:text="${doc.documentName}"></a>  under <span class="text-danger text-bold" th:text="${doc.document.categoryName}"></span> category <span class="right badge bg-info" th:if="${doc.document.documentApproval == 0}">Pending</span> <span class="right badge badge-success" th:if="${doc.document.documentApproval == 1}">Approved</span></h3>
+ 				  				  
+ 				  <span class="time" th:text="'version '+${doc.versionNumber}"></span>
+ 				  <span class="time text-danger" th:text="${doc.document.documentTypeName}+' > '+${doc.document.documentSubTypeName}"></span>
+ 				  
+ 				  <div class="timeline-body" th:if="${doc.note != ''}" th:text="${doc.note}"> </div>  
+ 				  <div class="timeline-body" th:if="${doc.note == ''}" >-</div>                 
+                </div>
+              </div>  
+               <!--  <div>
+                <i class="fas fa-clock bg-gray"></i>
+              </div> -->
+           
+            </div>              
+          </div>
+          <!-- /.col -->
+        </div>
+      </div>
+      <!-- /.timeline -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+   <footer  th:replace="footer"></footer>
+  
+
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/dist/js/adminlte.min.js}"></script>
+<!-- AdminLTE for demo purposes -->
+<script th:src="@{/dist/js/demo.js}"></script>
+</body>
+</html>

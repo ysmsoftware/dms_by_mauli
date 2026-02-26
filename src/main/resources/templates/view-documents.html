@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <link rel="shortcut icon"  th:href="@{/dist/img/favicon.ico}">
+  <title>DMS | Documents</title>
+  <link rel="shortcut icon"  th:href="@{/dist/img/favicon.ico}">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+          <!-- Toastr -->
+  <link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+  <!-- Theme style -->
+  <link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+  
+  <!-- Navbar -->
+  <nav th:replace="header"></nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside th:replace="sidebar::sidebar(${menu}, ${user})"></aside>
+  <!-- /.Main Sidebar Container -->
+  
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-4">
+            <h1 class="m-0 text-dark" th:text="${project.projectName}"></h1>
+          </div>  
+          <div class="col-sm-4">
+            <input class="form-control" type="text" id="Search" onkeyup="myFunction()" placeholder="Search Document" >
+          </div><!-- /.col -->
+          <div class="col-sm-4">
+             <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item">
+              <span><a th:href="@{'/timeline/'+${projectId}}" class="btn btn-success" ><i class="fas fa-history"></i> Timeline</a> </span>
+              <span><a th:href="@{'/add-document/'+${projectId}}" class="btn btn-danger" ><i class="fas fa-plus"></i> Add New Document</a> </span>
+              </li>
+             </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid"> <input type="hidden" name="messageSuccess" id="messageSuccess" th:value="${messageSuccess}">
+        <!-- Info boxes -->
+        <div class="row">
+          
+          <div class="col-12 col-sm-6 col-md-3 target" th:each="document: ${documents}">
+              
+          
+            <!-- Widget: user widget style 1 -->
+            <div class="card card-widget widget-user">
+              <!-- Add the bg color to the header using any of the bg-* classes -->
+              <div class="widget-user-header" th:classappend="${document.documentCategory == 'Designs' ? 'bg-maroon' : 'bg-purple'}">
+                <h3 class="widget-user-username" th:text="${document.documentTitle}"></h3>
+                <h5 class="widget-user-desc"  th:text="${document.categoryName}"></h5>
+              </div>
+              <div class="widget-user-image">
+               <!--  <a href="https://mhadapfms.in/docs/PPA/circular1700717162678.pdf" target="_blank">
+                  <img class="elevation-2" th:src="@{/dist/img/pdf7.png}" alt="User Avatar">
+                </a> -->
+                <a th:href="@{'/view-document-details/'+${document.documentId}}" >
+                  <img class="elevation-2" th:src="@{/dist/img/pdf7.png}" alt="User Avatar">
+                </a>
+                
+              </div>
+              <div class="card-footer">              
+               <div class="row">
+                  <div class="col-sm-12 ">
+                    <div class="description-block">
+                      <h5 class="description-header"  th:text="${document.documentBarcode}"></h5>
+                      <span class="description-text" th:text="${document.departmentName}"></span>
+                    </div>
+                  </div>                 
+               </div>
+              
+               <div class="row" th:if="${user.role} == 'ROLE_ADMIN'">
+                   <div class="col-sm-12 ">
+                    <div class="description-block"> 
+                      <span class="description-text"><a th:href="@{'/document-history/'+${document.documentId}}" class="btn btn-info"><i class="far fa-calendar-alt"></i> Version History</a></span>
+                    </div>
+                   </div>
+                  <!-- <div class="col-sm-6 border-right">
+                    <div class="description-block">
+                       <span class="description-text"><button type="button" class="btn btn-warning"><i class="fas fa-share"></i> Revise</button></span>
+                    </div>
+                  </div>                 
+                  <div class="col-sm-6 ">
+                    <div class="description-block">
+                      <span class="description-text"><button type="button" class="btn btn-info"><i class="far fa-thumbs-up"></i> Approve</button></span>
+                    </div>
+                   </div> -->
+                </div>
+                <!-- /.row -->
+              </div>
+            </div>
+            <!-- /.widget-user -->
+          </div>         
+          
+          <div class="clearfix hidden-md-up"></div>
+          
+        </div>
+      </div><!--/. container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+
+  <!-- Main Footer -->
+  <footer th:replace="footer"></footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script  th:src="@{/plugins/jquery/jquery.min.js}"></script>
+<!-- Bootstrap -->
+<script  th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- overlayScrollbars -->
+<script  th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+<!-- Toastr -->
+<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+<!-- AdminLTE App -->
+<script  th:src="@{/dist/js/adminlte.js}"></script>
+
+<!-- OPTIONAL SCRIPTS -->
+<script  th:src="@{/dist/js/demo.js}"></script>
+
+<!-- PAGE PLUGINS -->
+<!-- jQuery Mapael -->
+<script  th:src="@{/plugins/jquery-mousewheel/jquery.mousewheel.js}"></script>
+<script  th:src="@{/plugins/raphael/raphael.min.js}"></script>
+<script  th:src="@{/plugins/jquery-mapael/jquery.mapael.min.js}"></script>
+<script  th:src="@{/plugins/jquery-mapael/maps/usa_states.min.js}"></script>
+<!-- ChartJS -->
+<script  th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+
+<!-- PAGE SCRIPTS -->
+<!-- <script  th:src="@{/dist/js/pages/dashboard2.js}"></script> -->
+<script type="text/javascript">
+$(document).ready(function () {
+
+  //toast messages
+	 var messageSuccess = $('#messageSuccess').val();
+	  if(messageSuccess.length > 0){
+		  toastr.success(messageSuccess); 
+	  }	  	  
+});
+
+function myFunction() {
+	  var input = document.getElementById("Search");
+	  var filter = input.value.toLowerCase();
+	  var nodes = document.getElementsByClassName('target');
+
+	  for (i = 0; i < nodes.length; i++) {
+	    if (nodes[i].innerText.toLowerCase().includes(filter)) {
+	      nodes[i].style.display = "block";
+	    } else {
+	      nodes[i].style.display = "none";
+	    }
+	  }
+	}
+</script>  
+</body>
+</html>

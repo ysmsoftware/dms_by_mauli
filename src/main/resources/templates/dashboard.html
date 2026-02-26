@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head> 
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Mauli Multiatate Co-op Credit Society Ltd. Nashik | Dashboard</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon"  th:href="@{/dist/img/favicon.ico}">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- Tempusdominus Bbootstrap 4 -->
+  <link rel="stylesheet" th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+  <!-- iCheck -->
+  <link rel="stylesheet" th:href="@{/plugins/icheck-bootstrap/icheck-bootstrap.min.css}">
+  <!-- JQVMap -->
+  <link rel="stylesheet" th:href="@{/plugins/jqvmap/jqvmap.min.css}">
+  <!-- Theme style -->
+  <link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+  <!-- Daterange picker -->
+  <link rel="stylesheet" th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+  <!-- summernote -->
+  <link rel="stylesheet" th:href="@{/plugins/summernote/summernote-bs4.css}">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+  <!-- Navbar -->
+  <nav th:replace="header"></nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside th:replace="sidebar::sidebar(${menu}, ${user})"></aside>
+  <!-- /.Main Sidebar Container -->
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">  
+          <div class="col-sm-6">
+                <h1 class="m-0 text-dark">Dashboard  <span th:if="${rank <= 361}"><a th:href="@{/user/certificate}" class="btn btn-danger" >DOWNLOAD CERTIFICATE</a> </span>
+                <!-- <span id="start" style="display: none;" th:if="${flag != 2}"><a th:href="@{/user/exam-rules-1}" class="btn btn-danger" >START FINAL EXAM</a> </span>  -->
+                <input type="hidden" name="examDateTime" id="examDateTime" th:value="${exam.startDateTime}">
+                 <input type="hidden" name="nowDateTime" id="nowDateTime" value="">
+               <!--   <p class="text-success" ></p> -->
+                 
+               <!--  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal1">Exam Pre-process</button>  -->
+                </h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right" id="stop">
+              <!-- <li class="breadcrumb-item"><a href="#">Home</a></li>
+               <li class="breadcrumb-item ">FINAL EXAM will start within: <h1><span id="timer1" class="countdown text-red "></span></h1></li>  -->
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- Small boxes (Stat box) -->
+       <!--  <div class="row">
+          <div class="col-lg-3 col-6">
+            small box
+            <div class="small-box bg-info">
+              <div class="inner">
+                <h3>150</h3>
+
+                <p>New Orders</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-bag"></i>
+              </div>
+              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          ./col
+          <div class="col-lg-3 col-6">
+            small box
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h3>53<sup style="font-size: 20px">%</sup></h3>
+
+                <p>Bounce Rate</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-stats-bars"></i>
+              </div>
+              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          ./col
+          <div class="col-lg-3 col-6">
+            small box
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3>44</h3>
+
+                <p>User Registrations</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-person-add"></i>
+              </div>
+              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          ./col
+          <div class="col-lg-3 col-6">
+            small box
+            <div class="small-box bg-danger">
+              <div class="inner">
+                <h3>65</h3>
+
+                <p>Unique Visitors</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+              </div>
+              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          ./col
+        </div>
+         /.row -->
+        <!-- Main row -->          
+        <div class="row">          
+             <!-- right col (We are only adding the ID to make the widgets sortable)-->
+          <section class="col-lg-5 connectedSortable">
+
+            <!-- Map card -->
+            <div class="card ">
+              
+               <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-book mr-1"></i>
+                  समृद्धी प्रज्ञाशोध परीक्षा मार्गदर्शक
+                </h3>   
+                
+                <!-- tools card 
+                <div class="card-tools">
+                 <div class="btn-group">
+                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" data-offset="-52">
+                      <i class="fas fa-bars"></i></button>
+                    <div class="dropdown-menu" role="menu">                     
+                      <a th:href="@{/user/exam}" class="dropdown-item">My Exam</a>
+                      <div class="dropdown-divider"></div>
+                      <a th:href="@{/user/view-exam-book}" class="dropdown-item">View Book</a>
+                    </div>
+                  </div>
+                </div>  -->
+                <!-- /. tools -->             
+              </div><!-- /.card-header -->
+            
+              <div class="card-body">
+               <a href="#"><img id="img-sts" th:src="@{/dist/img/stse-book.png}" style="height: 100%; width: 100%;"></img></a>   
+              </div>            
+            </div>
+            <!-- /.card -->
+
+          </section>
+          <!-- right col -->
+       
+          
+          <!-- Left col -->
+          <section class="col-lg-7 connectedSortable">
+            <!-- Custom tabs (Charts with tabs)-->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-info mr-1"></i>
+                  परीक्षेसंदर्भातील माहिती
+                </h3>                
+              </div><!-- /.card-header -->
+              <div class="card-body">
+                <div class="tab-content p-0">
+                  <!-- Morris chart - Sales -->
+                  <div class="tab-pane active" >                 
+						
+						    <p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> समृद्धी प्रज्ञा शोध ही परीक्षा १५,००० विद्याथ्र्यांमध्ये होईल.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> समृद्धी प्रज्ञा शोध परीक्षा Smart Phone / Laptop / Computer ने online देता येईल.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> परीक्षा देण्यासाठी समृद्धी प्रज्ञाशोध परीक्षा मार्गदर्शक ह्या पुस्तकाची लिंक विद्यार्थ्यांना रजिस्टर मोबाईल नंबरवर मिळेल. हे मराठी व इंग्रजी असे दोन्ही भाषामध्ये उपलब्ध आहे.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> परीक्षा देण्यासाठी समृद्धी प्रज्ञाशोध परीक्षेच्या ऑनलाईन फॉर्म अधिकृत लायसन्स धारका कडून भरणे बंधनकारक आहे. पेमेंट सक्सेसफुल झाल्यानंतर रजिस्टर मोबाईल नंबर वर कन्फर्मेशन चा मेसेज येईल.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> सदर परीक्षा ही Samruddhi Learning Institute अंतर्गत Register होणाऱ्या विद्यार्थ्यांनकरिता आहे.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> सदर परीक्षेचे online Registration form हे 07 June 2021 ते 15 September 2021 या कालावधीत www.stsexam.in या वेबसाईटला उपलब्ध होतील.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> अंतिम परीक्षा 09 January 2022 रोजी ऑनलाईन पद्धतीने घेतली जाईल.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> परीक्षेच्या 1 महिन्याआधी प्रॅक्टिस टेस्ट व मॉक टेस्ट संदर्भात विद्यार्थ्यांना रजिस्टर नंबरवर SMS पाठवला जाईल.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> या परीक्षेसाठी 10 ते 35 वर्षापर्यंतचे विद्यार्थी/ विद्यार्थीनी पात्र आहेत.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> परीक्षा ही 100 प्रश्नांची (MCQ Type Questions) असेल, प्रत्येक प्रश्नांना 1 मार्क त्यासाठी 40 मिनीट वेळ असेल.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> पेपर तपासणीमध्ये निगेटीव्ह मार्कंग सिस्टीम असेल. (प्रत्येक चुकीच्या उत्तरावर 0.25 मार्क कमी होईल.)</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> संपुर्ण पेपर सोडवून झाल्यावर submit करणे बंधनकारक असेल.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> परीक्षेचा दिलेला वेळ पुर्ण होताच पेपर auto submit होईल.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> परीक्षा होताच निकाल व मेरीट लिस्ट त्याच दिवशी किंवा 1 दिवसाच्या आत www.stsexam.in या वेबसाईट वर प्रसिद्ध करण्यात येईल. </span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> उत्तेजनार्थ विद्यार्थ्यांना ई-सर्टीफीकेट हे निकालानंतर www.stsexam.in या वेबसाईट वर प्रसिद्ध करण्यात येईल विद्यार्थ्यांनी ते Download करुन घ्यावे.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> परीक्षेच्या वेळी विद्यार्थ्यांकडील System ( Smart Phone / Laptop / Computer) हँग होणे, लाईट जाणे किंवा Internet Problem होणे याला संयोजक जबाबदार राहणार नाही.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> परीक्षेत विचारले जाणारे सर्व प्रश्न या पुस्तकातील असतील.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> या पुस्तकामध्ये सर्व विषयाचे मिळून एकूण 1000 प्रश्न व उत्तरे आहेत. यापैकी 100 बहुपर्यायी प्रश्न (MCQ Type Questions) परीक्षेत असतील.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> STS Exam Series - 1 (State Level) परीक्षेची फीस ही रू. 999/- आहे.</span></p>
+						    <p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> एकुण 15000 पैकी मेरीट मध्ये येणारे पहिल्या 1718 विद्यार्थ्यांना स्कॉलरशीप ही Samruddhi Learning Institute तर्फे Edumania Pvt. Ltd. या संयोजकांद्वारे देण्यात येईल. </span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> मेरीट लिस्ट ही Accuracy & Time Limit ( Time required for Solving Paper) यावर आधारीत असेल.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> एका पेक्षा अधिक विद्यार्थ्यांना सारखे गुण मिळाल्यास ज्या विद्यार्थ्याने कमीत कमी वेळेत पेपर सबमिट केला असेल, त्यास मेरिट लिस्ट मध्ये प्राधान्य देण्यात येईल.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> परीक्षेच्या तारीख बदलणे किंवा काही कालावधी साठी पुढे ढकलणे. स्कॉलरशीप वितरण करण्याची वेळ व दिनांक निश्चित करणे, असे सर्व हक्क हे संयोजकांकडे राखीव आहे.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> एक्साम देतांना जर परीक्षार्थी ला कोणी सूचना करताना कॅमेरा मध्ये दिसले तर स्कॉलरशिप रद्द करण्यात येईल.</span></p>
+							<p><span><i aria-hidden="true" class="fas fa-check-circle text-danger"></i></span>&nbsp;&nbsp;<span> एक्साम देतांना कॅमेरा ऑन ठेवणे गरजेचे आहे.</span></p>
+                   </div>                  
+                </div>
+              </div><!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+
+          </section>
+          <!-- /.Left col -->
+        </div>
+        <!-- /.row (main row) -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  
+  <footer  th:replace="footer"></footer>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script th:src="@{/plugins/jquery-ui/jquery-ui.min.js}"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+<!-- Bootstrap 4 -->
+<script  th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- ChartJS -->
+<script  th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+<!-- Sparkline -->
+<script  th:src="@{/plugins/sparklines/sparkline.js}"></script>
+<!-- JQVMap -->
+<script  th:src="@{/plugins/jqvmap/jquery.vmap.min.js}"></script>
+<script  th:src="@{/plugins/jqvmap/maps/jquery.vmap.usa.js}"></script>
+<!-- jQuery Knob Chart -->
+<script  th:src="@{/plugins/jquery-knob/jquery.knob.min.js}"></script>
+<!-- daterangepicker -->
+<script  th:src="@{/plugins/moment/moment.min.js}"></script>
+<script  th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script  th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+<!-- Summernote -->
+<script  th:src="@{/plugins/summernote/summernote-bs4.min.js}"></script>
+<!-- overlayScrollbars -->
+<script  th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+<!-- AdminLTE App -->
+<script  th:src="@{/dist/js/adminlte.js}"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script  th:src="@{/dist/js/pages/dashboard.js}"></script>
+<!-- AdminLTE for demo purposes -->
+<script  th:src="@{/dist/js/demo.js}"></script>
+<script type="text/javascript">
+		
+	$.ajax({
+	    type: "POST",
+	    url: "/stse/user/getCurrentDateTime",
+	    async: false, 
+	    success: function(result){	    	
+	    	$("#nowDateTime").val(result);	    	
+	    }
+	});
+
+
+var dateArray = $('#examDateTime').val().split(' ');
+var year = dateArray[0].split('-');
+var time = dateArray[1].split(':');
+var ampm = dateArray[2]; 
+var hour =  time[0];
+if(ampm == 'PM'){
+	hour = hour==12? parseInt(hour) + 0 : parseInt(hour) + 12;
+}
+
+var dateArray1 = $('#nowDateTime').val().split(' '); 
+var year1 = dateArray1[0].split('-');
+var time1 = dateArray1[1].split(':');
+var ampm1 = dateArray1[2]; 
+var hour1 =  time1[0];
+if(ampm1 == 'PM'){
+	hour1 = hour1==12? parseInt(hour1) + 0 : parseInt(hour1) + 12;
+}
+
+var finishDate = new Date(year[2], year[1]-1, year[0], hour, time[1], time[2].split('.')[0]); 
+var startDate = new Date(year1[2], year1[1]-1, year1[0], hour1, time1[1], time1[2].split('.')[0]);  
+var secs = (finishDate-startDate) / 1000;  
+	
+var countdownTimer = '';
+var upgradeTime = secs; //2400 total sec row from the table
+var seconds = upgradeTime;
+var milliseconds = seconds * 1000;
+var speed = 50; //interval speed
+
+function timer() 
+{
+    milliseconds    = (seconds * 1000) - speed; //decrement based on speed
+    seconds         = milliseconds / 1000; //get new value for seconds
+    var days        = Math.floor(seconds/24/60/60);
+    var hoursLeft   = Math.floor((seconds) - (days*86400));
+    var hours       = Math.floor(hoursLeft/3600);
+    var minutesLeft = Math.floor((hoursLeft) - (hours*3600));
+    var minutes     = Math.floor(minutesLeft/60);
+    var remainingSeconds = (seconds % 60).toFixed(3);
+    
+    if(seconds <= 0){ stopTimer(); return; } //sets a flag here for final call
+     if(seconds>0){
+    	 document.getElementById("timer1").style.display = "block"; 
+    	 document.getElementById("examDateTime").style.display = "none"; 
+    } 
+       
+    
+    document.getElementById('timer1').innerHTML = pad(minutes) + " : " + pad(remainingSeconds);
+    document.getElementById("timer1").style.border = "1px solid";
+    document.getElementById("timer1").style.padding = "4px";
+
+    setTimeout('timer()', speed);
+}
+
+function stopTimer(){
+    clearTimeout(countdownTimer);	     
+    document.getElementById('timer1').innerHTML = "00 : 00.000"
+    document.getElementById("stop").style.display = "none"; 
+    document.getElementById("start").style.display = "inline";     
+}
+
+function pad(n) 
+{
+    return (n < 10 ? "0" + n : n);
+}
+
+clearTimeout(countdownTimer)
+countdownTimer = setTimeout('timer()', speed);
+
+
+document.addEventListener('visibilitychange', function() {
+    if(document.hidden) {
+        // tab is now inactive
+        // temporarily clear timer using clearInterval() / clearTimeout()
+    }
+    else {
+    	window.location.reload();    	
+    }
+});
+
+</script>
+</body>
+</html>

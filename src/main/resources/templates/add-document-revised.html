@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head> 
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>DMS | Add Revised Document </title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon"  th:href="@{/dist/img/favicon.ico}">
+ <link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" th:href="@{/plugins/icheck-bootstrap/icheck-bootstrap.min.css}">
+    <!-- daterange picker -->
+  <link rel="stylesheet" th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+   <!-- SweetAlert2 -->
+  <link rel="stylesheet" th:href="@{/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css}">
+    <!-- Tempusdominus Bbootstrap 4 -->
+  <link rel="stylesheet" th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+  <!-- iCheck -->
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" th:href="@{/plugins/icheck-bootstrap/icheck-bootstrap.min.css}">
+      <!-- Select2 -->
+  <link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+  <link rel="stylesheet" th:href="@{/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css}">
+  <!-- JQVMap -->
+  <link rel="stylesheet" th:href="@{/plugins/jqvmap/jqvmap.min.css}">
+      <!-- Toastr -->
+  <link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+  <!-- Theme style -->
+  <link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+  <!-- summernote -->
+  <link rel="stylesheet" th:href="@{/plugins/summernote/summernote-bs4.css}">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+  <!-- Navbar -->
+  <nav th:replace="header"></nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside th:replace="sidebar::sidebar(${menu},${user})"></aside>
+  <!-- /.Main Sidebar Container -->
+
+ <!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1 class="m-0 text-grey"><a class="m-0" th:href="@{'/documents/'+${project.projectId}}" th:text="${project.projectName}"></a> <small><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i> Add Revise Document</small> </h1>
+						</div>
+						<!--<div class="col-sm-6">
+				            <ol class="breadcrumb float-sm-right">
+				              <li class="breadcrumb-item"><a href="#">Document</a></li>
+				              <li class="breadcrumb-item active">Add Document</li>
+				            </ol>
+				        </div> /.col -->
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+    		<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<!-- left column -->
+						<div class="col-md-12">
+							<!-- general form elements -->
+							<div class="card card-outline card-primary">
+								<!-- <div class="card-header">
+									<h3 class="card-title">Add Form</h3>
+								</div> -->
+								<!-- /.card-header -->
+								<!-- form start -->
+								<form role="form" class="form-horizontal" th:action="@{/save-document-revised}" method="post" enctype="multipart/form-data">
+									
+									<input type="hidden" name="projectId" th:value="${projectId}"> 
+									<input type="hidden" name="document.documentId" th:value="${document.documentId}"> 
+									<input type="hidden" name="previousDocumentRevisedId" th:value="${previousDocumentRevisedId}"> 
+									
+									<input type="hidden" id="lastVersionNumber" name="lastVersionNumber" th:value="${document.lastVersionNumber}"> 
+									<div class="card-body">
+									
+									   <div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="projectName">Project</label>
+											</div>
+											<div class='col-sm-3'>
+												<div th:text="${project.projectName}"></div>
+											</div>	
+											
+											<div class='col-sm-2'>
+												<label for="projectName">Department</label>
+											</div>
+											<div class='col-sm-3'>
+												<div th:text="${document.departmentName}"></div>
+											</div>											
+										</div>
+									
+									    <div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="documentCategory">Document Category</label>
+											</div>
+											<div class='col-sm-3'>
+												<div th:text="${document.categoryName}"></div>
+											</div>		
+											
+											<div class='col-sm-2'>
+												<label for="documentCategory">Document Version</label>
+											</div>
+											<div class='col-sm-3'>
+												<div th:text="${document.lastVersionNumber}"></div>
+											</div>																					
+										</div>
+										
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="documentType">Document Type</label>
+											</div>
+											<div class='col-sm-3'>
+												<div th:text="${document.documentTypeName}"></div>
+											</div>	
+											
+											<div class='col-sm-2'>
+												<label for="documentSubType">Document Sub Type</label>
+											</div>
+											<div class='col-sm-3'>
+												<div th:text="${document.documentSubTypeName}"></div>
+											</div>												
+										</div>
+																				
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="documentTitle">Document Title</label>
+											</div>
+											<div class="col-sm-3">
+												<div th:text="${document.documentTitle}"></div>												
+											</div>		
+											
+											<div class='col-sm-2'>
+												<label for="aboutDocument">About Document</label>
+											</div>
+											<div class="col-sm-5">
+												<div th:text="${document.aboutDocument}"></div>	
+											</div>									
+										</div>
+										
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="aboutDocument">Version Type<span class="text-danger">*</span></label>
+											</div>
+											 <div class="col-sm-3">
+							                      <!-- radio -->
+							                      <div class="form-group">
+							                        <div class="form-check">
+							                          <input class="form-check-input" type="radio" name="versionTypeSelection" id="vRadio1" required="required" value="Minor">
+							                          <label class="form-check-label">Minor(Internal) Change</label>
+							                        </div>
+							                        <div class="form-check">
+							                          <input class="form-check-input" type="radio" name="versionTypeSelection" id="vRadio2" required="required" value="Major">
+							                          <label class="form-check-label">Major Change</label>
+							                        </div>							                        
+							                      </div>
+							                 </div>	
+							                 
+							                 <div class='col-sm-2'>
+												<label for="documentName">Revised Document Version<span class="text-danger">*</span></label>
+											</div>
+											<div class="col-sm-3">
+												<input type="text"  id="versionNumber" name="versionNumber" readonly="readonly"></input>												
+											</div>											
+										</div>
+																														
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="aboutDocument">I want to upload<span class="text-danger">*</span></label>
+											</div>
+											 <div class="col-sm-3">
+							                      <!-- radio -->
+							                      <div class="form-group">
+							                        <div class="form-check">
+							                          <input class="form-check-input" type="radio" name="documentTypeSelection" id="radio1" required="required" value="PDF">
+							                          <label class="form-check-label">PDF</label>
+							                        </div>
+							                        <div class="form-check">
+							                          <input class="form-check-input" type="radio" name="documentTypeSelection" id="radio2" required="required" value="Images">
+							                          <label class="form-check-label">Images</label>
+							                        </div>							                        
+							                      </div>
+							                 </div>	
+							                 
+							                 <div class='col-sm-2'>
+												<label for="documentName">Upload Document<span class="text-danger">*</span></label>
+											</div>
+											<div class="col-sm-3">
+												<input type="file"  id="files" name="files" required="required" accept="image/*" multiple="multiple"></input>												
+											</div>											
+										</div>
+																				
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="note">Note (optional)</label>
+											</div>
+											<div class="col-sm-3">
+												<textarea class="form-control" id="note" name="note" ></textarea>												
+											</div>											
+										</div>
+																				
+									</div>
+									
+									<!-- /.card-body -->
+									<div class="card-footer row">
+									      <div class="col-sm-2" ></div>
+									   		<button type="submit" id="btnSubmit" class="btn btn-primary  col-md-offset-2" >Submit</button>
+									</div>
+								</form>
+							</div>
+							<!-- /.card -->
+						</div>
+						<!--/.col (left) -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+  <!-- /.content-wrapper -->
+ 
+  <footer  th:replace="footer"></footer>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script th:src="@{/plugins/jquery-ui/jquery-ui.min.js}"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Summernote -->
+<script  th:src="@{/plugins/summernote/summernote-bs4.min.js}"></script>
+<!-- overlayScrollbars -->
+<script  th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+<!-- Select2 -->
+<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+<!-- Toastr -->
+<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+<!-- InputMask -->
+<script th:src="@{/plugins/moment/moment.min.js}"></script>
+<script th:src="@{/plugins/inputmask/min/jquery.inputmask.bundle.min.js}"></script>
+<!-- date-range-picker -->
+<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+<!-- bs-custom-file-input -->
+<script th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+<!-- AdminLTE App -->
+<script  th:src="@{/dist/js/adminlte.js}"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes)
+<script  th:src="@{/dist/js/pages/dashboard.js}"></script> -->
+<!-- jquery-validation -->
+<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+<script th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+<!-- AdminLTE for demo purposes -->
+<script  th:src="@{/dist/js/demo.js}"></script>
+<script type="text/javascript">
+  $(function(){
+	  
+	//Initialize Select2 Elements
+	    $('.select2').select2();
+	
+	    bsCustomFileInput.init();
+	    
+	    $('#vRadio1').change(function(){	    	
+	    	var latestVersion = $("#lastVersionNumber").val();
+	    	$("#versionNumber").val((parseFloat(latestVersion)+ parseFloat(0.1)).toFixed(1));  
+	    });
+	    
+	    $('#vRadio2').change(function(){
+	    	var latestVersion = $("#lastVersionNumber").val();  
+	    	$("#versionNumber").val(parseFloat(parseInt(latestVersion)+1.0).toFixed(1));  
+	    });
+	    	    
+	    $('#radio1').change(function(){
+	    	//selected_value = $("input[name='documentType']:checked").val();
+	    	//alert(selected_value); accept=""
+	    	$("#files").attr("accept",".pdf");
+	    	$("#files").removeAttr('multiple');
+	    	$("#files").val('');  
+	    });
+	    
+	    $('#radio2').change(function(){
+	    	$("#files").attr("accept","image/*");
+	    	$("#files").attr("multiple","multiple");
+	    	$("#files").val(''); 
+	    });
+		 
+  });
+</script>
+</body>
+</html>

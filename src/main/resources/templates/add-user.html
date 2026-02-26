@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head> 
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>DMS | Add User </title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon"  th:href="@{/dist/img/favicon.ico}">
+  <!-- Font Awesome -->
+ <link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" th:href="@{/plugins/icheck-bootstrap/icheck-bootstrap.min.css}">
+    <!-- daterange picker -->
+  <link rel="stylesheet" th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+   <!-- SweetAlert2 -->
+  <link rel="stylesheet" th:href="@{/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css}">
+    <!-- Tempusdominus Bbootstrap 4 -->
+  <link rel="stylesheet" th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+  <!-- iCheck -->
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" th:href="@{/plugins/icheck-bootstrap/icheck-bootstrap.min.css}">
+      <!-- Select2 -->
+  <link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+  <link rel="stylesheet" th:href="@{/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css}">
+  <!-- JQVMap -->
+  <link rel="stylesheet" th:href="@{/plugins/jqvmap/jqvmap.min.css}">
+      <!-- Toastr -->
+  <link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+  <!-- Theme style -->
+  <link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+  <!-- summernote -->
+  <link rel="stylesheet" th:href="@{/plugins/summernote/summernote-bs4.css}">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+  <!-- Navbar -->
+  <nav th:replace="header"></nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside th:replace="sidebar::sidebar(${menu},${user})"></aside>
+  <!-- /.Main Sidebar Container -->
+
+ <!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1 class="m-0 text-dark">Add User</h1>
+						</div>
+						<div class="col-sm-6">
+				            <ol class="breadcrumb float-sm-right">
+				              <li class="breadcrumb-item"><a href="#">Users</a></li>
+				              <li class="breadcrumb-item active">Add User</li>
+				            </ol>
+				        </div><!-- /.col -->
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+    		<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<!-- left column -->
+						<div class="col-md-12">
+							<!-- general form elements -->
+							<div class="card card-outline card-primary">
+								<!-- <div class="card-header">
+									<h3 class="card-title">Add Form</h3>
+								</div> -->
+								<!-- /.card-header -->
+								<!-- form start -->
+								<form role="form" class="form-horizontal" action="save-user" method="post" id="user" enctype="multipart/form-data">
+									
+									<input type="hidden" name="role" value="ROLE_USER">		
+									<input type="hidden" name="messageError" id="messageError" th:value="${messageError}">							
+									<div class="card-body">
+									
+									   <div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="documentCategory">Department<span class="text-danger">*</span></label>
+											</div>
+											<div class="col-sm-3">
+												<select class="form-control select2"  data-placeholder="Select Department" id="departmentId" name="departmentId" required="required">
+													<option></option>
+													<option th:each="dept:${departmentList}" th:value="${dept.departmentId}" th:text="${dept.departmentName}"></option>
+												</select>													
+											</div>	
+											<div class='col-sm-3'> 
+											   <div class='row'>
+												 <a class='col-sm-3' href="#" title="Add New Department" data-toggle="modal" data-target="#modal-department"><div class="timeline timeline-inverse">
+												 <div><i class="fas fa-plus bg-primary"></i></div></div> </a>
+												 <span class='col-sm-9 text-primary'><a href="#" title="Add New Department" data-toggle="modal" data-target="#modal-department">Add New Department</a></span>
+											  </div>
+											</div>											
+										</div>
+										
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="name">User Name</label>
+											</div>
+											<div class="col-sm-3">
+												<input type="text" class="form-control" id="name" name="name" required="required" >													
+											</div>											
+										</div>																		
+										
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="mobile">Mobile Number</label>
+											</div>
+											<div class="col-sm-3">
+												<input type="text" class="form-control" id="mobile" name="mobile"  required="required">													
+											</div>											
+										</div>
+										
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="password">User Password</label>
+											</div>
+											<div class="col-sm-3">
+												<input type="text" class="form-control" id="password" name="password"  required="required">													
+											</div>											
+										</div>
+										
+										<div class="form-group row">
+											<div class='col-sm-2'>
+												<label for="employeePhoto">Upload Profile Photo</label>
+											</div>
+											<div class="col-sm-3">
+												<input type="file" id="userPhoto" name="userPhoto" accept="image/*" />												
+											</div>								
+										</div>
+																		
+									</div>
+									<!-- /.card-body -->
+									<div class="card-footer row">
+									      <div class="col-sm-2" ></div>
+									   		<button type="submit" id="btnSubmit" class="btn btn-primary  col-md-offset-2" >Submit</button>
+									</div>
+								</form>
+							</div>
+							<!-- /.card -->
+						</div>
+						<!--/.col (left) -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+				
+				<div class="modal fade" id="modal-department">
+		        <div class="modal-dialog">
+		          <div class="modal-content">
+		            <form id="form1" name="form1">
+		            <div class="modal-header">
+		              <h4 class="modal-title">Add Department</h4>
+		              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		                <span aria-hidden="true">&times;</span>
+		              </button>
+		            </div>
+		            <div class="modal-body">
+		              <p><input type="text" class="form-control" id="departmentName" name="departmentName" placeholder="Enter Department Name" required="required"  ></p>
+		            </div>
+		            <div class="modal-footer justify-content-between">
+		              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		              <button type="button" class="btn btn-primary" id="btnSaveDepartment">Save</button>
+		            </div>
+		            </form>
+		          </div>
+		          <!-- /.modal-content -->
+			      </div>
+			      </div>
+			      <!-- /.modal -->
+				
+				
+			</section>
+			<!-- /.content -->
+		</div>
+  <!-- /.content-wrapper -->
+ 
+  <footer  th:replace="footer"></footer>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script th:src="@{/plugins/jquery-ui/jquery-ui.min.js}"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Summernote -->
+<script  th:src="@{/plugins/summernote/summernote-bs4.min.js}"></script>
+<!-- overlayScrollbars -->
+<script  th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+<!-- Select2 -->
+<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+<!-- Toastr -->
+<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+<!-- InputMask -->
+<script th:src="@{/plugins/moment/moment.min.js}"></script>
+<script th:src="@{/plugins/inputmask/min/jquery.inputmask.bundle.min.js}"></script>
+<!-- date-range-picker -->
+<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+<!-- bs-custom-file-input -->
+<script th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+<!-- AdminLTE App -->
+<script  th:src="@{/dist/js/adminlte.js}"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes)
+<script  th:src="@{/dist/js/pages/dashboard.js}"></script> -->
+<!-- jquery-validation -->
+<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+<script th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+<!-- AdminLTE for demo purposes -->
+<script  th:src="@{/dist/js/demo.js}"></script>
+<script type="text/javascript">
+jQuery(document).ready(function () {
+	
+	var contextPath = '[[${contextPath}]]';
+	
+	//Initialize Select2 Elements
+    $('.select2').select2();
+	
+	bsCustomFileInput.init();
+	   
+	 var messageError = $('#messageError').val();
+	  if(messageError.length > 0){
+		  toastr.error(messageError); 
+	  }
+	
+	  $('#btnSaveDepartment').click(function() {
+		   	 
+			if($("#form1")[0].checkValidity()) {
+              
+				  var departmentName= $("#departmentName").val();
+								  
+				  $.ajax({
+					  url:  contextPath+'/addDepartment',
+					  type: 'POST',
+					  dataType : 'json',
+			          data: {"departmentName":departmentName},
+					  success: function(result) {	
+						 
+						  $("#departmentId").empty();
+						  var $options = "<option></option>";
+						  for (var i = 0; i < result.length; i++) {
+							  var deptName = result[i].departmentName; 
+							  var deptId = result[i].departmentId; 
+							  if(departmentName.toLowerCase() == deptName.toLowerCase()){
+								  $options +=  "<option value='"+deptId+"' selected='selected'>"+deptName+"</option>" 
+							  }else{
+								  $options +=  "<option value="+deptId+">"+deptName+"</option>"
+							  }						  
+						  }
+						  $('#departmentId').html($options);							
+					  },
+					  error: function(e) {
+						//called when there is an error
+						//console.log(e.message);
+					  }
+				  });	
+				
+				  $("#modal-department").modal('hide');
+				  
+          } else {
+              $("#form1")[0].reportValidity();
+          }			  
+	 }); 
+		
+	 $("#modal-department").on("hidden.bs.modal", function () {
+		  $("#departmentName").val('');
+	 });
+	
+});
+</script>
+</body>
+</html>

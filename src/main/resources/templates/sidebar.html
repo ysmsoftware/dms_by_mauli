@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+
+ <aside class="main-sidebar sidebar-dark-primary elevation-4" th:fragment="sidebar(menu, user)">
+    <!-- Brand Logo -->
+    <a href="#" class="brand-link">
+      <img th:src="@{/dist/img/dms-sidebar.png}" alt="DMS Logo" class="brand-image " > 
+      <span class="brand-text font-weight-light">eDocs</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+       <div class="image"><!--   th:src="@{${filePath}+${user.userPhoto}}" -->
+          <img th:src="@{/dist/img/user.png}" class="img-circle elevation-2" alt="User Image" id="sidebar-profile-picture">
+        </div> 
+        <div class="info">
+        <a href="#" class="d-block"  th:text="${user.name}"></a> <!-- 'Welcome, '+  -->
+        </div>
+      </div>
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          
+          <li class="nav-item">
+            <a th:href="@{/dashboard}" class="nav-link" th:classappend="${menu.dashboardLink}">
+              <i class="nav-icon fas fa-network-wired"></i>
+              <p>
+                Projects
+              </p>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a th:href="@{/view-department}"  class="nav-link" th:classappend="${menu.departmentLink}" th:if="${user.role} == 'ROLE_ADMIN'">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Department
+              </p>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a th:href="@{/view-users}"  class="nav-link" th:classappend="${menu.userLink}" th:if="${user.role} == 'ROLE_ADMIN'">
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                Users
+              </p>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a th:href="@{/document-view-report}"  class="nav-link" th:classappend="${menu.documentViewReportLink}" th:if="${user.role} == 'ROLE_ADMIN'">
+              <i class="nav-icon fas fa-file"></i>
+              <p>
+                Document View Report 
+              </p>
+            </a>
+          </li>
+                 
+         </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+</body>
+</html>

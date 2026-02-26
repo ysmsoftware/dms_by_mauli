@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <link rel="shortcut icon"  th:href="@{/dist/img/favicon.ico}">
+  <title>DMS | View Document Details</title>
+  <link rel="shortcut icon"  th:href="@{/dist/img/favicon.ico}">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+          <!-- Toastr -->
+  <link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.0/dist/sweetalert2.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+  
+  <!-- Navbar -->
+  <nav th:replace="header"></nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside th:replace="sidebar::sidebar(${menu}, ${user})"></aside>
+  <!-- /.Main Sidebar Container -->
+  
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row">
+        
+          <div class="col-md-3">
+
+            <!-- Profile Image -->
+            <div class="card card-primary card-outline">
+              <div class="card-body box-profile">
+              
+                 <input type="hidden" id="documentId" th:value="${document.documentId}" />
+                 <input type="hidden" id="documentRevisedId" th:value="${documentRevised.documentRevisedId}" />
+                 <input type="hidden" id="userId" th:value="${user.id}" />
+                
+                 <div class="row" th:if="${documentRevised.documentApproval == 1 && document.documentApproval == 0}" id="approvalBtn">
+                  <div class="col-sm-6">
+                    <div class="description-block "> 
+                       <span class="description-text text-sm"><a th:href="@{'/add-document-revised/'+${document.documentId}+'/'+${documentRevised.documentRevisedId}}" class="btn btn-warning"><i class="fas fa-share"></i> Revise</a></span>
+                    </div>
+                  </div>                 
+                  <div class="col-sm-6" th:if="${user.role} == 'ROLE_ADMIN'">
+                    <div class="description-block">
+                      <span class="description-text text-sm"><button type="button" class="btn btn-info" id="approveBtn"><i class="far fa-thumbs-up"></i> Approve</button></span>
+                    </div>
+                  </div>
+                 </div>
+ <!--                
+                <h3 class="profile-username text-center" th:text="${document.documentTitle}"></h3>
+
+                <p class="text-muted text-center"  th:text="${document.categoryName}"></p>
+ -->
+                <ul class="list-group list-group-unbordered mb-3">
+                  <li class="list-group-item">
+                    <b>Title</b> <a class="float-right" th:text="${document.documentTitle}"></a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Project</b> <a class="float-right" th:href="@{'/documents/'+${projectId}}" th:text="${project.ProjectName}"></a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Department</b> <a class="float-right" th:text="${document.departmentName}"></a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Category</b> <a class="float-right" th:text="${document.categoryName}"></a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Document Type</b> <a class="float-right" th:text="${document.documentTypeName}"></a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Sub-Type</b> <a class="float-right" th:text="${document.documentSubTypeName}"></a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Code </b> <a class="float-right" th:text="${document.documentBarcode}"></a>
+                  </li>
+                   <li class="list-group-item">
+                     <strong>About Document</strong>
+                      <p class="text-muted" th:text="${document.aboutDocument}"></p>
+                  </li> 
+                  
+                 
+                  <li class="list-group-item" >
+                    <b>Uploaded By</b> <a class="float-right" th:text="${documentRevised.userName}"></a>
+                  </li>
+                                                      
+                  <li class="list-group-item">
+                    <b>Date </b> <a class="float-right" th:text="${documentRevised.createdDatetime}"></a>
+                  </li>
+                                    
+                  <li class="list-group-item">
+                    <b>Version </b> <a class="float-right" th:text="${documentRevised.versionNumber}"></a>
+                  </li>
+                           
+                </ul> 	
+                      <strong>Note</strong>
+                      <p class="text-muted" th:text="${documentRevised.note}"></p>			 
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+
+          </div>
+          <!-- /.col -->
+        
+        <div class="col-md-9">
+            <div class="card">
+               <div class="card-body">
+               		 <object  class="col-md-12" th:data="${filePath}+${documentRevised.documentName}" type="application/pdf"   style="height:150vh;" ></object> 
+                   
+                   <!--  <object  class="col-md-12" data="https://mhadapfms.in/docs/PPA/circular1700717162678.pdf" type="application/pdf" style="height:150vh;"></object> -->
+               </div>
+            </div>
+        </div>    
+        
+         <!--  <div class="col-sm-12">
+            <h1 class="m-0 text-dark" th:text="${project.projectName}" ></h1> 
+            <h1 class="m-0 text-danger" ><small th:text="${document.documentTitle}" ></small></h1>
+          </div>     -->        
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+   
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+
+  <!-- Main Footer -->
+  <footer th:replace="footer"></footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script  th:src="@{/plugins/jquery/jquery.min.js}"></script>
+<!-- Bootstrap -->
+<script  th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- overlayScrollbars -->
+<script  th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+<!-- Toastr -->
+<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+<!-- AdminLTE App -->
+<script  th:src="@{/dist/js/adminlte.js}"></script>
+
+<!-- OPTIONAL SCRIPTS -->
+<script  th:src="@{/dist/js/demo.js}"></script>
+
+<!-- PAGE PLUGINS -->
+<!-- jQuery Mapael -->
+<script  th:src="@{/plugins/jquery-mousewheel/jquery.mousewheel.js}"></script>
+<script  th:src="@{/plugins/raphael/raphael.min.js}"></script>
+<script  th:src="@{/plugins/jquery-mapael/jquery.mapael.min.js}"></script>
+<script  th:src="@{/plugins/jquery-mapael/maps/usa_states.min.js}"></script>
+<!-- ChartJS -->
+<script  th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.0/dist/sweetalert2.min.js"></script>
+
+<!-- PAGE SCRIPTS -->
+<!-- <script  th:src="@{/dist/js/pages/dashboard2.js}"></script> -->
+<script type="text/javascript">
+$(document).ready(function () {
+	 
+	  var contextPath = '[[${contextPath}]]';
+ 	
+	  $("#approveBtn").click(function() {		  
+		 
+		  var documentId = $("#documentId").val();
+		  var documentRevisedId =  $("#documentRevisedId").val();
+		  var userId = $("#userId").val();
+		  
+          // Show confirmation box
+          Swal.fire({
+              title: 'Are you sure?',
+              text: "You are about to approve this document!",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, approve it!'
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  // Send AJAX request to backend to handle approval
+                  $.ajax({
+                      url: contextPath+'/approveDocument',  // Update with your backend endpoint
+                      type: 'POST',
+                      dataType : 'json',
+			          data: {"documentId":documentId, "documentRevisedId":documentRevisedId, "userId":userId},
+                      success: function(response) {
+                    	  $("#approvalBtn").hide();
+                          Swal.fire(
+                              'Approved!',
+                              'The document has been approved.',
+                              'success'
+                          );
+                      },
+                      error: function(error) {                    	
+                          Swal.fire(
+                              'Error!',
+                              'Failed to approve the document.',
+                              'error'
+                          );
+                      }
+                  });
+               }
+          });
+      });  
+});
+</script>  
+</body>
+</html>
