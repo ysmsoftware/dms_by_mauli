@@ -18,12 +18,16 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 2222
           script: |
+            # Recovery SSH access
             echo "Configuring firewall to allow SSH access..."
-            ufw allow 22/tcp 
-            ufw allow 2222/tcp 
-            ufw reload 
+            
+            # AlmaLinux uses firewalld, not ufw
+            firewall-cmd --permanent --add-port=22/tcp
+            firewall-cmd --permanent --add-port=2222/tcp
+            firewall-cmd --reload
             systemctl restart sshd
-            echo " SSH access configured"
+            
+            echo "SSH access configured"
             cd /var/www/dms_by_mauli
             chmod +x deploy.sh
             ./deploy.sh
