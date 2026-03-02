@@ -1,11 +1,4 @@
 #!/bin/bash
-# Recovery SSH access
-echo "Configuring firewall to allow SSH access..."
-ufw allow 22/tcp 
-ufw allow 2222/tcp 
-ufw reload 
-systemctl restart sshd
-echo " SSH access configured"
 
 echo " Starting deployment..."
 
