@@ -7,23 +7,14 @@ cd /var/www/dms_by_mauli || exit
 echo " Pulling latest code..."
 git pull origin main
 
-echo " Stopping old container..."
-docker stop dms-container || true
-docker rm dms-container || true
+# Clean old build cache to avoid disk filling again
+docker builder prune -af
 
-echo " Removing old image..."
-docker rmi dms-app || true
+# Rebuild fresh
+docker compose build --no-cache
 
-echo " Building Docker image..."
-docker build -t dms-app .
+# Start everything
+docker compose up -d
 
-echo " Running container..."
-docker run -d -p 8082:8080 --name dms-container dms-app
-
-echo " Running containers:"
+# Show status
 docker ps
-
-echo " Logs:"
-docker logs dms-container
-
-echo " Deployment finished!"
