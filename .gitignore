@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+dms.sql
+.env
+PROJECT_ARCHITECTURE.md
+TODO

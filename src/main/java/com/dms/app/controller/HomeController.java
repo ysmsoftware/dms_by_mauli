@@ -2,13 +2,17 @@ package com.dms.app.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import javax.imageio.ImageIO;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.awt.image.BufferedImage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -61,6 +66,7 @@ import com.dms.app.repository.DocumentTypeRepository;
 import com.dms.app.repository.DocumentViewRepository;
 import com.dms.app.repository.ProjectRepository;
 import com.dms.app.repository.UserRepository;
+import com.dms.app.service.S3StorageService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,9 +79,11 @@ public class HomeController {
 	
 	 }
 	
-	 private final String UPLOAD_DIR              = "D:\\PICTURES\\"; 	 
-	 private final String SERVER_URL			  = "http://localhost:8080/img/"; // <Context docBase="D:\PICTURES\" path="/img" />
-	 private final String CONTEXT_URL			  = "";
+	 @Value("${app.storage.temp-dir:/tmp/dms-storage/}")
+	 private String tempStorageRoot;
+
+	 @Value("${app.context-url:}")
+	 private String CONTEXT_URL;
 	 
 	 private final String EMPLOYEE_DEFAULT_IMG	  = "user.png";
 	
@@ -112,6 +120,9 @@ public class HomeController {
 	
 	@Autowired
 	private DocumentViewRepository documentViewRepository;
+
+	@Autowired
+	private S3StorageService s3StorageService;
 	
 	Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
@@ -140,7 +151,7 @@ public class HomeController {
 		model.addAttribute("user", user);
 		menu.setDashboardLink("active");			
 		model.addAttribute("menu", menu);
-		model.addAttribute("filePath", SERVER_URL);
+		model.addAttribute("filePath", getServerUrl());
 		model.addAttribute("contextPath", CONTEXT_URL);
 		model.addAttribute("projectList", projectRepository.findAllByOrderByProjectIdDesc());
 		return "dashboard2";
@@ -158,7 +169,7 @@ public class HomeController {
 		menu.setAddUserLink("active");
 		menu.setUserMenuOpen("menu-open");
 		model.addAttribute("menu", menu);
-		model.addAttribute("filePath", SERVER_URL);
+		model.addAttribute("filePath", getServerUrl());
 		model.addAttribute("contextPath", CONTEXT_URL);
 		
 		return "add-user";
@@ -173,14 +184,12 @@ public class HomeController {
 		String fileName1 = EMPLOYEE_DEFAULT_IMG;
 		   
 	     if(userPhoto.getSize() != 0 && user.getId() == 0) {
-	    	     String passport  = userPhoto.getOriginalFilename();
+	    	     String passport  = getSafeFileName(userPhoto.getOriginalFilename());
 			     long   timestmp  = new Timestamp(System.currentTimeMillis()).getTime();
+			     String extension = getFileExtension(passport);
 	  		     
-			      fileName1 = "dp"+timestmp+passport.substring(passport.lastIndexOf("."));
-			      // save the file on the local file system
-		          File file1 = new  File(UPLOAD_DIR+fileName1); 
-				  try {  FileOutputStream fos = new  FileOutputStream(file1); fos.write(userPhoto.getBytes()); fos.close(); } catch (IOException e) {  e.printStackTrace(); }
-	              
+			      fileName1 = "dp"+timestmp+extension;
+			      s3StorageService.uploadFile(fileName1, userPhoto);
 	     }
 		
 		try {
@@ -244,7 +253,7 @@ public class HomeController {
 		menu.setViewUserLink("active");
 		menu.setUserMenuOpen("menu-open");
 		model.addAttribute("menu", menu);
-		model.addAttribute("filePath", SERVER_URL);
+		model.addAttribute("filePath", getServerUrl());
 		model.addAttribute("contextPath", CONTEXT_URL);
 		
 		return "view-users";
@@ -265,7 +274,7 @@ public class HomeController {
 			menu.setAddUserLink("active");
 			menu.setUserMenuOpen("menu-open");
 			model.addAttribute("menu", menu);
-			model.addAttribute("filePath", SERVER_URL);
+			model.addAttribute("filePath", getServerUrl());
 			model.addAttribute("contextPath", CONTEXT_URL);
 			
 			return "edit-user";
@@ -296,7 +305,7 @@ public class HomeController {
 		menu.setAddDepartmentLink("active");
 		menu.setDepartmentMenuOpen("menu-open");
 		model.addAttribute("menu", menu);
-		model.addAttribute("filePath", SERVER_URL);
+		model.addAttribute("filePath", getServerUrl());
 		model.addAttribute("contextPath", CONTEXT_URL);
 		
 		return "add-department";
@@ -340,7 +349,7 @@ public class HomeController {
 			menu.setAddDepartmentLink("active");
 			menu.setDepartmentMenuOpen("menu-open");
 			model.addAttribute("menu", menu);
-			model.addAttribute("filePath", SERVER_URL);
+			model.addAttribute("filePath", getServerUrl());
 			model.addAttribute("contextPath", CONTEXT_URL);
 			
 			return "edit-department";
@@ -358,7 +367,7 @@ public class HomeController {
 		menu.setViewDepartmentLink("active");
 		menu.setDepartmentMenuOpen("menu-open");
 		model.addAttribute("menu", menu);
-		model.addAttribute("filePath", SERVER_URL);
+		model.addAttribute("filePath", getServerUrl());
 		model.addAttribute("contextPath", CONTEXT_URL);
 		
 		return "view-department";
@@ -398,19 +407,10 @@ public class HomeController {
 		try {
 			//System.out.println("userId : "+userId);
 			
-			String passport  = logo.getOriginalFilename();
-			String fileName1 = "dp"+DateTimeUtil.getTimeStampInMiliseconds()+passport.substring(passport.lastIndexOf("."));
+			String passport  = getSafeFileName(logo.getOriginalFilename());
+			String fileName1 = "dp"+DateTimeUtil.getTimeStampInMiliseconds()+getFileExtension(passport);
 
-			File file = new File(UPLOAD_DIR + fileName1);
-			try {
-				FileOutputStream fos = new FileOutputStream(file);
-				fos.write(logo.getBytes());
-				fos.close();
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-				
-			}
+			s3StorageService.uploadFile(fileName1, logo);
 			
 			userRepository.uploadProfilePicture(userId, fileName1);
 			
@@ -428,7 +428,7 @@ public class HomeController {
 		model.addAttribute("user", user);
 		menu.setDashboardLink("active");			
 		model.addAttribute("menu", menu);
-		model.addAttribute("filePath", SERVER_URL);
+		model.addAttribute("filePath", getServerUrl());
 		model.addAttribute("contextPath", CONTEXT_URL);
 		
 		return "add-project";
@@ -446,8 +446,6 @@ public class HomeController {
 			project.setUserId(user.getId());
 			project.setCreatedDatetime(DateTimeUtil.getSysDateTime());
 			projectRepository.save(project);
-			
-			CreateFolder.newFolder(UPLOAD_DIR, project.getProjectName());
 			
 			redirectAttrs.addFlashAttribute("messageSuccess", "Success.");
 			return "redirect:/dashboard";
@@ -469,7 +467,7 @@ public class HomeController {
 			model.addAttribute("user", user);
 			menu.setDashboardLink("active");			
 			model.addAttribute("menu", menu);
-			model.addAttribute("filePath", SERVER_URL);
+			model.addAttribute("filePath", getServerUrl());
 			model.addAttribute("contextPath", CONTEXT_URL);
 			model.addAttribute("project", projectRepository.getById(projectId));
 			model.addAttribute("projectId", projectId);
@@ -506,7 +504,7 @@ public class HomeController {
 			model.addAttribute("user", user);
 			menu.setDashboardLink("active");			
 			model.addAttribute("menu", menu);
-			model.addAttribute("filePath", SERVER_URL);
+			model.addAttribute("filePath", getServerUrl());
 			model.addAttribute("contextPath", CONTEXT_URL);
 			model.addAttribute("project", projectRepository.getById(projectId));
 			model.addAttribute("projectId", projectId);
@@ -551,7 +549,7 @@ public class HomeController {
 			model.addAttribute("user", user);
 			menu.setDashboardLink("active");			
 			model.addAttribute("menu", menu);
-			model.addAttribute("filePath", SERVER_URL);
+			model.addAttribute("filePath", getServerUrl());
 			model.addAttribute("contextPath", CONTEXT_URL);
 						
 			List<Category> categoryList = user.getRole().equals("ROLE_ADMIN")? categoryRepository.findAll() : categoryRepository.getCategoryByDepartmentId(user.getDepartmentId());
@@ -568,79 +566,76 @@ public class HomeController {
 	 @PostMapping("/save-document")
 	 public String saveDocument(@ModelAttribute ActiveLinkMenu menu, @RequestParam("files") MultipartFile[] files, @ModelAttribute("document") Document document, 
 	    		BindingResult result, Model model, Principal principal, RedirectAttributes redirectAttrs) throws Exception {
-				
+		 String sessionRoot = null;
 		 try {
 			    String userName = principal.getName();
 				User user = userRepository.getUserByUserName(userName);
 				float versionNumber = 1.0f;
+				sessionRoot = createSessionTempRoot("document");
 				
-				StringBuffer upload_dir = new StringBuffer(UPLOAD_DIR).append(projectRepository.getById(document.getProjectId()).getProjectName()).append("/");
+				StringBuffer upload_dir = new StringBuffer(sessionRoot).append(projectRepository.getById(document.getProjectId()).getProjectName()).append("/");
 								
-				String documentType = documentTypeRepository.getById(document.getDocumentType()).getDocumentTypeName();   // document.getDocumentType();
+				String documentType = documentTypeRepository.getById(document.getDocumentType()).getDocumentTypeName();
 				CreateFolder.newFolder(upload_dir.toString(), documentType);
 				
 				int documentSubTypeId = document.getDocumentSubType();
-				//System.out.println("documentSubTypeId :"+documentSubTypeId);
 				if(documentSubTypeId != 0) {
-					String documentSubType = documentSubTypeRepository.getById(documentSubTypeId).getDocumentSubTypeName(); //document.getDocumentSubType();
-				//	if(documentSubType == null) {
-				//		upload_dir.append(documentType).append("\\");					
-				//	}else {					
-						CreateFolder.newFolder((upload_dir).append(documentType).append("/").toString(), documentSubType);
-						upload_dir.append(documentSubType).append("/");	
-				//	}
-				}else {	
-					upload_dir.append(documentType).append("/");	
+					String documentSubType = documentSubTypeRepository.getById(documentSubTypeId).getDocumentSubTypeName();
+					CreateFolder.newFolder((upload_dir).append(documentType).append("/").toString(), documentSubType);
+					upload_dir.append(documentSubType).append("/");
+				}else {
+					upload_dir.append(documentType).append("/");
 				}
 				
-				//String documentVersion = document.getVersionNumber();
 				CreateFolder.newFolder(upload_dir.toString(), String.valueOf(versionNumber));
-				
 				upload_dir.append(versionNumber).append("/");
-				
-				//System.out.println(upload_dir.toString());
+				String uploadDirPath = upload_dir.toString();
+				String relativeUploadDir = toRelativeKey(uploadDirPath, sessionRoot);
 								
 				String barcode = String.valueOf(DateTimeUtil.getTimeStampInMiliseconds());
-				boolean isBarcodeCreated = BarCodeImage.getBarCodeImage(barcode, upload_dir.toString());
+				boolean isBarcodeCreated = BarCodeImage.getBarCodeImage(barcode, uploadDirPath);
 				
 				String documentTypeSel = document.getDocumentTypeSelection();
-				String documentName = upload_dir+document.getDocumentTitle()+versionNumber+".pdf";
-				String barcodeFile  = upload_dir+barcode+".png";
+				String documentName = uploadDirPath+document.getDocumentTitle()+versionNumber+".pdf";
+				String barcodeFile  = uploadDirPath+barcode+".png";
 				String pdfName = "";
 				
-				if(documentTypeSel.equals("PDF")) {
-							//System.out.println("files.length : "+files.length);
-					     MultipartFile file = files[0]; // Arrays.asList(files).stream().findFirst().get();
-					//Arrays.asList(files).stream().forEach(file -> {
-					     //System.out.println(file.getOriginalFilename().substring(0,file.getOriginalFilename().lastIndexOf(".")));
-					     
-						String fileName = file.getOriginalFilename().substring(0,file.getOriginalFilename().lastIndexOf("."))+versionNumber+".pdf";						
-						File file1 = new  File(upload_dir+fileName); 
-						try {  FileOutputStream fos = new  FileOutputStream(file1); fos.write(file.getBytes()); fos.close(); } catch (IOException e) {  e.printStackTrace(); }
-						
-						if(isBarcodeCreated) {
-						   AddBarcodeToPDF.addBarcodeToPdf(upload_dir.toString(), fileName, barcodeFile);		
-						   pdfName = fileName;
-						}
-					//});	 
-					 
-				} else if(documentTypeSel.equals("Images")) {
+				if("PDF".equals(documentTypeSel)) {
+					MultipartFile file = files[0];
+					String sourceName = getSafeFileName(file.getOriginalFilename());
+					String baseName = sourceName.lastIndexOf(".") > 0 ? sourceName.substring(0, sourceName.lastIndexOf(".")) : sourceName;
+					String fileName = baseName + versionNumber + ".pdf";
+					File file1 = new  File(uploadDirPath+fileName);
+					Files.write(file1.toPath(), file.getBytes());
 					
-					List<String> fileNames = new ArrayList<>();
-					//fileNames.add(barcodeFile);
-					Arrays.asList(files).stream().forEach(file -> {
-						String fileName = file.getOriginalFilename();						
-						File file1 = new  File(upload_dir+fileName); 
-						try {  FileOutputStream fos = new  FileOutputStream(file1); fos.write(file.getBytes()); fos.close(); } catch (IOException e) {  e.printStackTrace(); }
-						fileNames.add(upload_dir+file.getOriginalFilename());
-					});
+					if(isBarcodeCreated) {
+					   AddBarcodeToPDF.addBarcodeToPdf(uploadDirPath, fileName, barcodeFile);
+					   pdfName = fileName;
+					}
+					 
+				} else if("Images".equals(documentTypeSel)) {
+					
+					List<String> fileNames = new ArrayList<String>();
+					for (MultipartFile file : Arrays.asList(files)) {
+						String fileName = getSafeFileName(file.getOriginalFilename());
+						File file1 = new  File(uploadDirPath+fileName);
+						Files.write(file1.toPath(), file.getBytes());
+						fileNames.add(uploadDirPath+fileName);
+					}
 				   				
 					if(isBarcodeCreated) {
 						CombineIntoPDF.combineImagesIntoPDF(documentName, fileNames.stream().toArray(String[]::new)); 
 						pdfName = document.getDocumentTitle()+versionNumber+".pdf";
-						AddBarcodeToPDF.addBarcodeToPdf(upload_dir.toString(), pdfName, barcodeFile);						
+						AddBarcodeToPDF.addBarcodeToPdf(uploadDirPath, pdfName, barcodeFile);						
 					}
-				} 
+				}
+
+				if (!pdfName.isEmpty()) {
+					s3StorageService.uploadLocalFile(relativeUploadDir + pdfName, new File(uploadDirPath + pdfName), "application/pdf");
+				}
+				if (isBarcodeCreated) {
+					s3StorageService.uploadLocalFile(relativeUploadDir + barcode + ".png", new File(barcodeFile), "image/png");
+				}
 					
 				document.setCreatedDatetime(DateTimeUtil.getSysDateTime());
 				document.setUserId(user.getId()); 
@@ -667,17 +662,17 @@ public class HomeController {
 				docRevisedList.add(documentRevised);
 				
 				document.setDocumentRevisedList(docRevisedList);
-				
 				documentRepository.save(document);
 				
 				redirectAttrs.addFlashAttribute("messageSuccess", "Success.");
 				return "redirect:/documents/"+document.getProjectId();
 				
 		 } catch (Exception e) {
-				// TODO: handle exception
 				e.printStackTrace();
 				redirectAttrs.addFlashAttribute("messageError", "Something went wrong. Please try again.");
 				return "redirect:/documents/"+document.getProjectId();
+		 } finally {
+				cleanupTempDirectory(sessionRoot);
 		 }		
 	 }
 	 
@@ -690,7 +685,7 @@ public class HomeController {
 			model.addAttribute("user", user);
 			menu.setDashboardLink("active");			
 			model.addAttribute("menu", menu);
-			model.addAttribute("filePath", SERVER_URL);
+			model.addAttribute("filePath", getServerUrl());
 			model.addAttribute("contextPath", CONTEXT_URL);
 			
 			Document document = documentRepository.getById(documentId);
@@ -736,79 +731,75 @@ public class HomeController {
 		 
 		 String userName = principal.getName();
 		 User user = userRepository.getUserByUserName(userName);
+		 String sessionRoot = null;
 		 try {
 			   
 				float versionNumber = documentRevised.getVersionNumber();
+				sessionRoot = createSessionTempRoot("document-revised");
 				
-				StringBuffer upload_dir = new StringBuffer(UPLOAD_DIR).append(projectRepository.getById(doc.getProjectId()).getProjectName()).append("/");
+				StringBuffer upload_dir = new StringBuffer(sessionRoot).append(projectRepository.getById(doc.getProjectId()).getProjectName()).append("/");
 								
-				String documentType = documentTypeRepository.getById(doc.getDocumentType()).getDocumentTypeName();   // document.getDocumentType();
+				String documentType = documentTypeRepository.getById(doc.getDocumentType()).getDocumentTypeName();
 				CreateFolder.newFolder(upload_dir.toString(), documentType);
 				
 				int documentSubTypeId = doc.getDocumentSubType();
-				//System.out.println("documentSubTypeId :"+documentSubTypeId);
 				if(documentSubTypeId != 0) {				
-					String documentSubType = documentSubTypeRepository.getById(doc.getDocumentSubType()).getDocumentSubTypeName(); //document.getDocumentSubType();
-				//	if(documentSubType == null) {
-				//		upload_dir.append(documentType).append("\\");					
-				//	}else {					
-						CreateFolder.newFolder((upload_dir).append(documentType).append("/").toString(), documentSubType);
-						upload_dir.append(documentSubType).append("/");	
-				//	}
+					String documentSubType = documentSubTypeRepository.getById(doc.getDocumentSubType()).getDocumentSubTypeName();
+					CreateFolder.newFolder((upload_dir).append(documentType).append("/").toString(), documentSubType);
+					upload_dir.append(documentSubType).append("/");	
 				}else {
 					upload_dir.append(documentType).append("/");		
 				}
 				
-				String firstVersionPath = upload_dir.toString();;
-				
-				//String documentVersion = document.getVersionNumber();
 				CreateFolder.newFolder(upload_dir.toString(), String.valueOf(versionNumber));
-				
 				upload_dir.append(versionNumber).append("/");
-				
-				//System.out.println(upload_dir.toString());
+				String uploadDirPath = upload_dir.toString();
+				String relativeUploadDir = toRelativeKey(uploadDirPath, sessionRoot);
 								
 				String barcode = doc.getDocumentBarcode();
-				//boolean isBarcodeCreated = BarCodeImage.getBarCodeImage(barcode, upload_dir.toString());
+				boolean isBarcodeCreated = BarCodeImage.getBarCodeImage(barcode, uploadDirPath);
 				
 				String documentTypeSel = documentRevised.getDocumentTypeSelection();
-				String documentName = upload_dir+doc.getDocumentTitle()+versionNumber+".pdf";
-				String barcodeFile  = firstVersionPath+doc.getVersionNumber()+"/"+barcode+".png";
+				String documentName = uploadDirPath+doc.getDocumentTitle()+versionNumber+".pdf";
+				String barcodeFile  = uploadDirPath+barcode+".png";
 				String pdfName = "";
 				
-				if(documentTypeSel.equals("PDF")) {
-						 //System.out.println("files.length : "+files.length);
-					     MultipartFile file = files[0]; // Arrays.asList(files).stream().findFirst().get();
-					     //Arrays.asList(files).stream().forEach(file -> {
-					     //System.out.println(file.getOriginalFilename().substring(0,file.getOriginalFilename().lastIndexOf(".")));
-					     
-						String fileName = file.getOriginalFilename().substring(0,file.getOriginalFilename().lastIndexOf("."))+versionNumber+".pdf";						
-						File file1 = new  File(upload_dir+fileName); 
-						try {  FileOutputStream fos = new  FileOutputStream(file1); fos.write(file.getBytes()); fos.close(); } catch (IOException e) {  e.printStackTrace(); }
+				if("PDF".equals(documentTypeSel)) {
+					     MultipartFile file = files[0];
+					     String sourceName = getSafeFileName(file.getOriginalFilename());
+					     String baseName = sourceName.lastIndexOf(".") > 0 ? sourceName.substring(0, sourceName.lastIndexOf(".")) : sourceName;
+						String fileName = baseName+versionNumber+".pdf";
+						File file1 = new  File(uploadDirPath+fileName);
+						Files.write(file1.toPath(), file.getBytes());
 						
-						//if(isBarcodeCreated) {
-						   AddBarcodeToPDF.addBarcodeToPdf(upload_dir.toString(), fileName, barcodeFile);		
+						if(isBarcodeCreated) {
+						   AddBarcodeToPDF.addBarcodeToPdf(uploadDirPath, fileName, barcodeFile);
 						   pdfName = fileName;
-						//}
-					//});	 
+						}
 					 
-				} else if(documentTypeSel.equals("Images")) {
+				} else if("Images".equals(documentTypeSel)) {
 					
-					List<String> fileNames = new ArrayList<>();
-					//fileNames.add(barcodeFile);
-					Arrays.asList(files).stream().forEach(file -> {
-						String fileName = file.getOriginalFilename();						
-						File file1 = new  File(upload_dir+fileName); 
-						try {  FileOutputStream fos = new  FileOutputStream(file1); fos.write(file.getBytes()); fos.close(); } catch (IOException e) {  e.printStackTrace(); }
-						fileNames.add(upload_dir+file.getOriginalFilename());
-					});
+					List<String> fileNames = new ArrayList<String>();
+					for (MultipartFile file : Arrays.asList(files)) {
+						String fileName = getSafeFileName(file.getOriginalFilename());
+						File file1 = new  File(uploadDirPath+fileName);
+						Files.write(file1.toPath(), file.getBytes());
+						fileNames.add(uploadDirPath+fileName);
+					}
 				   				
-					//if(isBarcodeCreated) {
+					if(isBarcodeCreated) {
 						CombineIntoPDF.combineImagesIntoPDF(documentName, fileNames.stream().toArray(String[]::new)); 
 						pdfName = doc.getDocumentTitle()+versionNumber+".pdf";
-						AddBarcodeToPDF.addBarcodeToPdf(upload_dir.toString(), pdfName, barcodeFile);						
-					//}
-				} 
+						AddBarcodeToPDF.addBarcodeToPdf(uploadDirPath, pdfName, barcodeFile);						
+					}
+				}
+
+				if (!pdfName.isEmpty()) {
+					s3StorageService.uploadLocalFile(relativeUploadDir + pdfName, new File(uploadDirPath + pdfName), "application/pdf");
+				}
+				if (isBarcodeCreated) {
+					s3StorageService.uploadLocalFile(relativeUploadDir + barcode + ".png", new File(barcodeFile), "image/png");
+				}
 					
 				documentRevised.setCreatedDatetime(DateTimeUtil.getSysDateTime());
 				documentRevised.setUserId(user.getId()); 
@@ -828,10 +819,11 @@ public class HomeController {
 				return "redirect:/documents/"+doc.getProjectId();
 				
 		 } catch (Exception e) {
-				// documentId
 				e.printStackTrace();
 				redirectAttrs.addFlashAttribute("messageError", "Something went wrong. Please try again.");
 				return "redirect:/documents/"+doc.getProjectId();
+		 } finally {
+				cleanupTempDirectory(sessionRoot);
 		 }		
 	 }
 	 
@@ -841,7 +833,7 @@ public class HomeController {
 		 
 		    String userName = principal.getName();
 			User user = userRepository.getUserByUserName(userName);
-			String url = SERVER_URL;
+			String url = getServerUrl();
 									
 			model.addAttribute("user", user);
 			menu.setDashboardLink("active");			
@@ -906,7 +898,7 @@ public class HomeController {
 		 
 		    String userName = principal.getName();
 			User user = userRepository.getUserByUserName(userName);
-			String url = SERVER_URL;
+			String url = getServerUrl();
 			
 			model.addAttribute("user", user);
 			menu.setDashboardLink("active");			
@@ -970,7 +962,7 @@ public class HomeController {
 			model.addAttribute("user", user);
 			menu.setDashboardLink("active");			
 			model.addAttribute("menu", menu);
-			model.addAttribute("filePath", SERVER_URL);		
+			model.addAttribute("filePath", getServerUrl());		
 			model.addAttribute("contextPath", CONTEXT_URL);
 			model.addAttribute("documentId", documentId);
 			
@@ -1168,7 +1160,7 @@ public class HomeController {
 			model.addAttribute("menu", menu);
 			model.addAttribute("userList", userRepository.findAll());
 			model.addAttribute("projectList", projectRepository.findAll());			
-			model.addAttribute("filePath", SERVER_URL);
+			model.addAttribute("filePath", getServerUrl());
 			model.addAttribute("contextPath", CONTEXT_URL);
 						
 			return "document-view-report";
@@ -1200,7 +1192,7 @@ public class HomeController {
 				model.addAttribute("menu", menu);
 				model.addAttribute("userList", userRepository.findAll());
 				model.addAttribute("projectList", projectRepository.findAll());			
-				model.addAttribute("filePath", SERVER_URL);
+				model.addAttribute("filePath", getServerUrl());
 				model.addAttribute("contextPath", CONTEXT_URL);
 							
 				List<DocumentViewReport> documentViewList = null;
@@ -1222,6 +1214,80 @@ public class HomeController {
 		    
 						
 			return "document-view-report";
+	 }
+
+	 private String getServerUrl() {
+		return s3StorageService.buildPublicBaseUrl();
+	 }
+
+	 private String createSessionTempRoot(String scope) throws IOException {
+		Path basePath = Paths.get(tempStorageRoot);
+		Files.createDirectories(basePath);
+		Path sessionPath = basePath.resolve(scope + "-" + UUID.randomUUID().toString());
+		Files.createDirectories(sessionPath);
+		return ensureTrailingSlash(sessionPath.toString().replace("\\", "/"));
+	 }
+
+	 private String toRelativeKey(String path, String rootPath) {
+		String normalizedPath = path == null ? "" : path.replace("\\", "/");
+		String normalizedRoot = ensureTrailingSlash(rootPath == null ? "" : rootPath.replace("\\", "/"));
+		if (normalizedPath.startsWith(normalizedRoot)) {
+			return normalizedPath.substring(normalizedRoot.length());
+		}
+		return normalizedPath;
+	 }
+
+	 private void cleanupTempDirectory(String rootPath) {
+		if (rootPath == null || rootPath.trim().isEmpty()) {
+			return;
+		}
+		Path path = Paths.get(rootPath);
+		if (!Files.exists(path)) {
+			return;
+		}
+		try {
+			Files.walk(path)
+					.sorted(Comparator.reverseOrder())
+					.forEach(p -> {
+						try {
+							Files.deleteIfExists(p);
+						} catch (IOException ex) {
+							logger.warn("Failed to cleanup temp path: {}", p.toString());
+						}
+					});
+		} catch (IOException ex) {
+			logger.warn("Failed to walk temp directory: {}", rootPath);
+		}
+	 }
+
+	 private String getSafeFileName(String originalFileName) {
+		if (originalFileName == null || originalFileName.trim().isEmpty()) {
+			return "file";
+		}
+		String normalized = originalFileName.replace("\\", "/");
+		int lastSlash = normalized.lastIndexOf("/");
+		if (lastSlash >= 0) {
+			return normalized.substring(lastSlash + 1);
+		}
+		return normalized;
+	 }
+
+	 private String getFileExtension(String fileName) {
+		if (fileName == null) {
+			return "";
+		}
+		int idx = fileName.lastIndexOf(".");
+		if (idx < 0) {
+			return "";
+		}
+		return fileName.substring(idx);
+	 }
+
+	 private String ensureTrailingSlash(String value) {
+		if (value.endsWith("/")) {
+			return value;
+		}
+		return value + "/";
 	 }
 	 
 }
