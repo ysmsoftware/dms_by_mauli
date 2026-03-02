@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+# syntax=docker/dockerfile:01
 
 FROM eclipse-temurin:21-jdk-jammy AS build
 WORKDIR /app
