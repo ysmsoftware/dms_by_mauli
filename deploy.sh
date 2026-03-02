@@ -1,4 +1,11 @@
 #!/bin/bash
+# Recovery SSH access
+echo "Configuring firewall to allow SSH access..."
+ufw allow 22/tcp 
+ufw allow 2222/tcp 
+ufw reload 
+systemctl restart sshd
+echo " SSH access configured"
 
 echo " Starting deployment..."
 
@@ -7,9 +14,6 @@ cd /var/www/dms_by_mauli || exit
 echo " Pulling latest code..."
 git pull origin main
 
-# Recovery SSH access
-ufw allow 22/tcp && ufw allow 2222/tcp && ufw reload && systemctl restart sshd
-echo " Deployment completed successfully!"
 
 # Clean old build cache to avoid disk filling again
 docker builder prune -af
