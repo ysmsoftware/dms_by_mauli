@@ -1,14 +1,5 @@
 #!/bin/bash
-# Recovery SSH access
-echo "Configuring firewall to allow SSH access..."
 
-# AlmaLinux uses firewalld, not ufw
-firewall-cmd --permanent --add-port=22/tcp
-firewall-cmd --permanent --add-port=2222/tcp
-firewall-cmd --reload
-systemctl restart sshd
-
-echo "SSH access configured"
 echo "Starting deployment..."
 cd /var/www/dms_by_mauli || exit
 echo "Pulling latest code..."
