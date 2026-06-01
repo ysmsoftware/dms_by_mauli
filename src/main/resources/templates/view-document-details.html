@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.0/dist/sweetalert2.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+  <link rel="stylesheet" th:href="@{/css/document-preview.css}">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
@@ -118,7 +119,7 @@
         <div class="col-md-9">
             <div class="card">
                <div class="card-body">
-               		 <object  class="col-md-12" th:data="${filePath}+${documentRevised.documentName}" type="application/pdf"   style="height:150vh;" ></object> 
+                		 <object  class="col-md-12 document-preview-frame" th:data="${previewUrl}" type="application/pdf" ></object> 
                    
                    <!--  <object  class="col-md-12" data="https://mhadapfms.in/docs/PPA/circular1700717162678.pdf" type="application/pdf" style="height:150vh;"></object> -->
                </div>

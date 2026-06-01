@@ -66,6 +66,7 @@ import com.dms.app.repository.DocumentTypeRepository;
 import com.dms.app.repository.DocumentViewRepository;
 import com.dms.app.repository.ProjectRepository;
 import com.dms.app.repository.UserRepository;
+import com.dms.app.service.S3PresignedUrlService;
 import com.dms.app.service.S3StorageService;
 
 import org.slf4j.Logger;
@@ -123,6 +124,9 @@ public class HomeController {
 
 	@Autowired
 	private S3StorageService s3StorageService;
+
+	@Autowired
+	private S3PresignedUrlService s3PresignedUrlService;
 	
 	Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
@@ -833,7 +837,6 @@ public class HomeController {
 		 
 		    String userName = principal.getName();
 			User user = userRepository.getUserByUserName(userName);
-			String url = getServerUrl();
 									
 			model.addAttribute("user", user);
 			menu.setDashboardLink("active");			
@@ -878,8 +881,7 @@ public class HomeController {
 			Project project =  projectRepository.getById(document.getProjectId());
 			model.addAttribute("project",project);
 			model.addAttribute("projectId", document.getProjectId());
-			
-			model.addAttribute("filePath", url+project.getProjectName()+"/"+documentTypeName+"/"+documentSubTypeName+docRevised.getVersionNumber()+"/"); 
+			model.addAttribute("previewUrl", buildDocumentPreviewUrl(project.getProjectName(), documentTypeName, documentSubTypeName, docRevised.getVersionNumber(), docRevised.getDocumentName()));
 			model.addAttribute("contextPath", CONTEXT_URL);
 			
 			DocumentView docView = new DocumentView();
@@ -898,7 +900,6 @@ public class HomeController {
 		 
 		    String userName = principal.getName();
 			User user = userRepository.getUserByUserName(userName);
-			String url = getServerUrl();
 			
 			model.addAttribute("user", user);
 			menu.setDashboardLink("active");			
@@ -940,8 +941,7 @@ public class HomeController {
 			Project project =  projectRepository.getById(document.getProjectId());
 			model.addAttribute("project",project);
 			model.addAttribute("projectId", document.getProjectId());
-			
-			model.addAttribute("filePath", url+project.getProjectName()+"/"+documentTypeName+"/"+documentSubTypeName+docRevised.getVersionNumber()+"/"); 
+			model.addAttribute("previewUrl", buildDocumentPreviewUrl(project.getProjectName(), documentTypeName, documentSubTypeName, docRevised.getVersionNumber(), docRevised.getDocumentName()));
 			model.addAttribute("contextPath", CONTEXT_URL);
 			
 			DocumentView docView = new DocumentView();
@@ -1218,6 +1218,11 @@ public class HomeController {
 
 	 private String getServerUrl() {
 		return s3StorageService.buildPublicBaseUrl();
+	 }
+
+	 private String buildDocumentPreviewUrl(String projectName, String documentTypeName, String documentSubTypeName, float versionNumber, String documentName) {
+		String relativeKey = projectName + "/" + documentTypeName + "/" + documentSubTypeName + versionNumber + "/" + documentName;
+		return s3PresignedUrlService.generateDownloadUrl(relativeKey);
 	 }
 
 	 private String createSessionTempRoot(String scope) throws IOException {
