@@ -46,7 +46,7 @@ services:
     networks:
       - dms_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8082/login"]
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:8082/login || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 10
